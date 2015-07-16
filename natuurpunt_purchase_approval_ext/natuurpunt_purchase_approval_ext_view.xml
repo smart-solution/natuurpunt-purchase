@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+                    
+        <record model="ir.ui.view" id="account_supplier_invoice_line_delivery_status_inherit">
+            <field name="name">account.supplier.invoice.line.delivery_status.inherit</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form" />
+            <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_line']/tree//field[@name='price_subtotal']" position="after">
+                <field name="po_delivery_status"/>
+            </xpath>
+        </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_user_form">
+            <field name="name">user.form</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="natuurpunt_purchase_approval.view_user_form" />
+            <field name="arch" type="xml">
+		<field name="notification_email" position="after">
+			<button name="manually_generate_purchase_approval_reminders" string="generate reminders" type="object" />
+	        </field>
+            </field>
+        </record>
+
+        <record id="purchase.act_res_partner_2_supplier_invoices" model="ir.actions.act_window">
+            <field name="domain">[('type','=','in_invoice'),('partner_id','=',active_id)]</field>
+        </record>
+
+    </data>
+</openerp>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="view_user_form">
+            <field name="name">user.form</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//page[@string='Access Rights']" position="after">
+                    <page string="Purchase Approval">
+                        <group>
+                            <field name="purchase_approval_level_id" />
+                            <field name="approval_substitute_id" />
+                            <field name="notification_email" />
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_user_tree">
+            <field name="name">user.form</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_tree" />
+            <field name="arch" type="xml">
+                <field name="login_date" position="after">
+                    <field name="approval_substitute_id" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_user_search">
+            <field name="name">user.form</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_search" />
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="approval_substitute_id" string="Approval Substitute" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_user_preference_form">
+            <field name="name">user.preference.form</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form_simple_modif" />
+            <field name="arch" type="xml">
+                <field name="company_id" position="after">
+                    <field name="approval_substitute_id" readonly="0" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

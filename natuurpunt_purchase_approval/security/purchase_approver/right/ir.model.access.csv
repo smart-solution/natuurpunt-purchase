@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_purchase_order,access.purchase.order,model_purchase_order,group_purchase_approver,1,1,1,1
+access_purchase_order_line,access.purchase.order.line,model_purchase_order_line,group_purchase_approver,1,1,1,1
+access_account_invoice,access.account.invoice,model_account_invoice,group_purchase_approver,1,0,0,0
+access_purchase_approval_level_purchase_approver,access.purchase.approval.level,model_purchase_approval_level,group_purchase_approver,1,0,0,0
+access_purchase_approval_item_purchase_approver,access.purchase.approval.item,model_purchase_approval_item,group_purchase_approver,1,1,0,0
+access_purchase_approval_item_line_purchase_approver,access.purchase.approval.item.line,model_purchase_approval_item_line,group_purchase_approver,1,1,0,0
+access_account_analytic_dimension_level_purchase_approver,access.account.analytic.dimension.level,model_account_analytic_dimension_level,group_purchase_approver,1,0,0,0

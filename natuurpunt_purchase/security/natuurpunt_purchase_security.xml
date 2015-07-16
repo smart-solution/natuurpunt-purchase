@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <record id="purchase_requisition.group_purchase_requisition_user" model="res.groups">
+            <field name="menu_access" eval="[(4, ref('base.menu_purchase_root'))]" />
+        </record>
+
+    </data>
+</openerp>

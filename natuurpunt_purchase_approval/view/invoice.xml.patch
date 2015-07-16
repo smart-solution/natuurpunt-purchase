@@ -1,0 +1,11 @@
+--- invoice.xml	2015-06-29 15:16:51.975236200 +0200
++++ invoice.xml.patched	2015-06-29 15:14:39.000000000 +0200
+@@ -13,7 +13,7 @@
+                     </field>
+ 
+                     <button name="invoice_open" position="after">
+-                        <button name="invoice_approve" states="confirmed" string="Approve" type="object" class="oe_highlight" groups="account.group_account_invoice" />
++                        <button name="invoice_approve" invisible="1" states="confirmed" string="Approve" type="object" class="oe_highlight" groups="account.group_account_invoice" />
+                     </button>
+ 
+                     <button name="%(account.action_account_invoice_refund)d" position="attributes">

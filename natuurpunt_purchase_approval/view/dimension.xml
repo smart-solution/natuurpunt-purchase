@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="view_account_analytic_dimension_tree">
+            <field name="name">account.analytic.dimension.tree</field>
+            <field name="model">account.analytic.dimension</field>
+            <field name="inherit_id" ref="multi_analytical_account.view_np_account_analytic_dimension_tree" />
+            <field name="arch" type="xml">
+                <field name="company_id" position="after">
+                    <field name="is_active_for_approval" />
+                    <field name="unrestricted_amount" />
+                    <field name="tolerance_absolute" />
+                    <field name="tolerance_percent" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_account_analytic_dimension_form">
+            <field name="name">account.analytic.dimension.form</field>
+            <field name="model">account.analytic.dimension</field>
+            <field name="inherit_id" ref="multi_analytical_account.view_np_account_analytic_dimension_form" />
+            <field name="arch" type="xml">
+                <field name="name" position="replace" />
+                <field name="sequence" position="replace" />
+                <field name="company_id" position="replace">
+                    <group col="2">
+                        <field name="name" />
+                        <field name="company_id" />
+                        <field name="sequence" />
+                        <field name="is_active_for_approval" />
+                        <field name="unrestricted_amount" />
+                        <field name="tolerance_absolute" />
+                        <field name="tolerance_percent" />
+                        <field name="level_ids">
+                            <tree string="" editable="top">
+                                <field name="company_id" invisible="1" />
+                                <field name="level_id" string="Name" />
+                                <field name="amount" />
+                                <field name="fallback_approver_id" />
+                            </tree> 
+                        </field>
+                    </group>
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_purchase_approval_level_tree">
+            <field name="name">purchase.approval.level.tree</field>
+            <field name="model">purchase.approval.level</field>
+            <field name="arch" type="xml">
+                <tree string="Purchase Approval Levels">
+                    <field name="name" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_purchase_approval_level_tree">
+            <field name="name">Purchase Approval Levels</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchase.approval.level</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem action="action_purchase_approval_level_tree" id="menu_purchase_approval_level"
+            parent="account.menu_analytic_accounting"
+            groups="analytic.group_analytic_accounting"/>
+
+        <!-- we reuse the view already defined in multianalytic so we don't need what is below
+        record model="ir.actions.act_window" id="action_account_analytic_dimension_tree">
+            <field name="name">Analytical Dimensions</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.analytic.dimension</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="action_account_analytic_dimension_form_tree">
+            <field name="name">Analytical Dimensions</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_account_analytic_dimension_tree" />
+            <field name="act_window_id" ref="action_account_analytic_dimension_tree" />
+        </record>
+
+        <record model="ir.actions.act_window.view" id="action_account_analytic_dimension_form_view">
+            <field name="name">Analytical Dimensions</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_account_analytic_dimension_form" />
+            <field name="act_window_id" ref="action_account_analytic_dimension_tree" />
+        </record>
+
+        <menuitem action="action_account_analytic_dimension_tree" id="menu_account_analytic_dimension_config"
+            parent="account.menu_analytic_accounting"
+            groups="analytic.group_analytic_accounting"
+        /-->
+
+    </data>
+</openerp>

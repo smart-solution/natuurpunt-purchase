@@ -1,0 +1,75 @@
+# Dutch translation for a Smart Solution module
+# Copyright (c) 2012-Today Smart Solution
+# FIRST AUTHOR <fabian.semal@smartsolution.be>
+#
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2013-06-07 19:37+0000\n"
+"PO-Revision-Date: 2013-07-13 22:42+0000\n"
+"Last-Translator: Fabian Semal <fabian.semal@smartsolution.be>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+
+#. module: natuurpunt_purchase_approval
+#: model:ir.ui.menu,name:natuurpunt_purchase_approval.menu_all_purchase_approval_item
+#: model:ir.actions.act_window,name:natuurpunt_purchase_approval.action_all_purchase_approval_item_tree
+msgid "Purchases to Approve"
+msgstr "Aankooporders voor goedkeuring"
+
+#. module: natuurpunt_purchase_approval
+#: model:ir.ui.menu,name:natuurpunt_purchase_approval.menu_purchase_approval_item
+#: model:ir.actions.act_window,name:natuurpunt_purchase_approval.action_purchase_approval_item_tree
+msgid "My Purchases to Approve"
+msgstr "Mijn aankooporders voor goedkeuring"
+
+#. module: natuurpunt_purchase_approval
+#: model:ir.ui.menu,name:natuurpunt_purchase_approval.menu_all_invoice_approval_item
+#: model:ir.actions.act_window,name:natuurpunt_purchase_approval.action_all_invoice_approval_item_tree
+msgid "Invoices to Approve"
+msgstr "Facturen voor goedkeuring"
+
+#. module: natuurpunt_purchase_approval
+#: model:ir.ui.menu,name:natuurpunt_purchase_approval.menu_invoice_approval_item
+#: model:ir.actions.act_window,name:natuurpunt_purchase_approval.action_invoice_approval_item_tree
+msgid "My Invoices to Approve"
+msgstr "Mijn facturen voor goedkeuring"
+
+#. module: multi_analytical_account
+#: model:ir.ui.menu,name:multi_analytical_account.np_invoices_to_complete_menu
+#: model:ir.actions.act_window,name:multi_analytical_account.np_invoices_to_complete_action
+msgid "Invoices to Complete"
+msgstr "Facturen voor controle"
+
+#. module: multi_analytical_account
+#: model:ir.ui.menu,name:multi_analytical_account.np_my_invoices_to_complete_menu
+#: model:ir.actions.act_window,name:multi_analytical_account.np_my_invoices_to_complete_action
+msgid "My Invoices to Complete"
+msgstr "Mijn facturen voor controle"
+
+#. module: natuurpunt_purchase_approval
+#: model:ir.ui.menu,name:natuurpunt_purchase_approval.menu_purchase_approval_level
+#: model:ir.actions.act_window,name:natuurpunt_purchase_approval.action_purchase_approval_level_tree
+msgid "Purchase Approval Levels"
+msgstr "Goedkeuringniveau's"
+
+#. module: natuurpunt_purchase_approval
+#: view:purchase.order:0
+msgid "Close"
+msgstr "Afsluiten"
+
+#. module: natuurpunt_purchase_approval
+#: view:purchase.order:0
+msgid "Re-open"
+msgstr "Heropenen"
+
+#. module: natuurpunt_purchase_approval
+#: view:purchase.approval.item:0
+msgid "Next Responsible"
+msgstr "Volgende verantw voor goedkeuring"
+
+#. module: natuurpunt_purchase_approval
+#: view:purchase.approval.item:0
+msgid "Partner"
+msgstr "Leverencier"

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="approval_item_search">
+            <field name="name">approval_item_search</field>
+            <field name="model">purchase.approval.item</field>
+            <field name="arch" type="xml">
+                <search string="Search Approval Items">
+                    <filter string="Analytical Account" context="{'group_by': 'analytical_account_id'}" />
+                    <filter string="Purchase Order" context="{'group_by': 'purchase_order_id'}" />
+                    <field string="Next Responsible" name='line_next_approver_id'/>
+
+                    <group expand="0" string="Group By...">
+                        <filter string="Partner" icon="terp-partner" domain="[]" context="{'group_by':'partner_id'}"/>
+                        <filter string="Next Responsible" icon="terp-partner" domain="[]" context="{'group_by':'line_next_approver_id'}"/>
+                        <filter string="Verantw voor analytische toewijzing" icon="terp-partner" domain="[]" context="{'group_by':'dimension_user_id'}"/>
+                    </group>
+
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="purchase_approval_item_tree">
+            <field name="name">purchase_approval_item_tree</field>
+            <field name="model">purchase.approval.item</field>
+            <field name="arch" type="xml">
+                <tree string="Purchase Approval Items">
+                    <field name="purchase_order_id" />
+                    <field name="analytical_account_id" />
+                    <field name="amount" />
+                    <field name="next_level" />
+                    <field name="next_amount" />
+                    <field name="line_next_approver_id" />
+                    <field name="company_id" groups="base.group_multi_company" />
+                    <field name="state" invisible="1" />
+                    <button name="approve_item_level" string="Approve"
+                        states="waiting" type="object" icon="gtk-go-forward" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="purchase_approval_item_form">
+            <field name="name">purchase_approval_item_form</field>
+            <field name="model">purchase.approval.item</field>
+            <field name="arch" type="xml">
+                <form string="Purchase Approval Item" create="false" edit="false">
+                    <field name="purchase_order_id" />
+                    <field name="analytical_account_id" />
+                    <field name="amount" />
+                    <field name="next_level" />
+                    <field name="next_amount" />
+                    <field name="line_next_approver_id" />
+                    <field name="company_id" groups="base.group_multi_company" />
+                    <field name="state" invisible="1" />
+                    <button name="approve_item_level" string="Approve"
+                        states="waiting" type="object" icon="gtk-go-forward" />
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="invoice_approval_item_tree">
+            <field name="name">invoice_approval_item_tree</field>
+            <field name="model">purchase.approval.item</field>
+            <field name="arch" type="xml">
+                <tree string="Invoice Approval Items">
+                    <field name="invoice_id" />
+                    <field name="analytical_account_id" />
+                    <field name="partner_id"/>
+                    <field name="dimension_user_id"/>
+                    <field name="amount" />
+                    <field name="next_level" />
+                    <field name="next_amount" />
+                    <field name="line_next_approver_id" />
+                    <field name="company_id" groups="base.group_multi_company" />
+                    <field name="state" invisible="1" />
+                    <button name="approve_item_level" string="Approve"
+                        states="waiting" type="object" icon="gtk-go-forward" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="invoice_approval_item_form">
+            <field name="name">invoice_approval_item_form</field>
+            <field name="model">purchase.approval.item</field>
+            <field name="priority">15</field>
+            <field name="arch" type="xml">
+                <form string="Invoice Approval Item" create="false" edit="false">
+                    <field name="purchase_order_id" />
+                    <field name="invoice_id" attrs="{'invisible':[('invoice_id','=',False)]}"/>
+                    <field name="analytical_account_id" />
+                    <field name="amount" />
+                    <field name="next_level" />
+                    <field name="next_amount" />
+                    <field name="line_next_approver_id" />
+                    <field name="company_id" groups="base.group_multi_company" />
+                    <field name="state" invisible="1" />
+                    <button name="approve_item_level" string="Approve"
+                        states="waiting" type="object" icon="gtk-go-forward" />
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_all_purchase_approval_item_tree">
+            <field name="name">Purchases to Approve</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchase.approval.item</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="purchase_approval_item_tree" />
+            <field name="search_view_id" ref="approval_item_search" />
+            <field name="domain">
+[
+    ('purchase_order_id', '!=', False),
+    ('state', '=', 'waiting'),
+]
+            </field>
+            <field name="context">{}</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_purchase_approval_item_tree">
+            <field name="name">My Purchases to Approve</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchase.approval.item</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="purchase_approval_item_tree" />
+            <field name="search_view_id" ref="approval_item_search" />
+            <field name="domain">
+[
+    ('purchase_order_id', '!=', False),
+    ('state', '=', 'waiting'),
+    '|',
+    ('line_next_approver_id', '=', uid),
+    '&amp;',
+    ('line_next_approver_id', '!=', False),
+    ('line_next_approver_id.approval_substitute_id.id', '=', uid),
+]
+            </field>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p>
+                    You currently do not have any purchase approval item to manage.
+                </p>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_all_invoice_approval_item_tree">
+            <field name="name">Invoices to Approve</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchase.approval.item</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="invoice_approval_item_tree" />
+            <field name="search_view_id" ref="approval_item_search" />
+            <field name="domain">
+[
+    ('invoice_id', '!=', False),
+    ('state', '=', 'waiting'),
+]
+            </field>
+            <field name="context">{}</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_invoice_approval_item_tree">
+            <field name="name">My Invoices to Approve</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchase.approval.item</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="invoice_approval_item_tree" />
+            <field name="search_view_id" ref="approval_item_search" />
+            <field name="domain">
+[
+    ('invoice_id', '!=', False),
+    ('state', '=', 'waiting'),
+    '|',
+    ('line_next_approver_id', '=', uid),
+    '&amp;',
+    ('line_next_approver_id', '!=', False),
+    ('line_next_approver_id.approval_substitute_id', '=', uid),
+]
+            </field>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p>
+                    You currently do not have any invoice approval item to manage.
+                </p>
+            </field>
+        </record>
+
+        <menuitem action="action_all_purchase_approval_item_tree" id="menu_all_purchase_approval_item"
+            parent="purchase.menu_procurement_management" groups="purchase.group_purchase_user" sequence="8"
+        />
+
+        <menuitem action="action_purchase_approval_item_tree" id="menu_purchase_approval_item"
+            parent="purchase.menu_procurement_management" groups="group_purchase_approver" sequence="9"
+        />
+
+        <menuitem action="action_all_invoice_approval_item_tree" id="menu_all_invoice_approval_item"
+            parent="purchase.menu_procurement_management_invoice" groups="purchase.group_purchase_manager"
+            sequence="98"
+        />
+
+        <menuitem action="action_invoice_approval_item_tree" id="menu_invoice_approval_item"
+            parent="purchase.menu_procurement_management_invoice" groups="group_invoice_approver"
+            sequence="99"
+        />
+
+    </data>
+</openerp>

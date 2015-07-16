@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- Purchases -->
+        <record id="group_invoice_approver" model="res.groups">
+            <field name="menu_access" eval="[(4, ref('base.menu_purchase_root'))]" />
+        </record>
+        <!-- Purchases > Invoice Control -->
+        <record id="group_invoice_approver" model="res.groups">
+            <field name="menu_access" eval="[(4, ref('purchase.menu_procurement_management_invoice'))]" />
+        </record>
+        <!-- Purchase > Invoice Control > My Invoices to Approve -->
+        <record id="group_invoice_approver" model="res.groups">
+            <field name="menu_access" eval="[(4, ref('natuurpunt_purchase_approval.menu_invoice_approval_item'))]" />
+        </record>
+    </data>
+</openerp>
+

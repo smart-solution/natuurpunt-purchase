@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="purchase_order_form_approval_inherit">
+            <field name="name">purchase.order.form.approval.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form" />
+            <field name="arch" type="xml">
+
+                <button name="action_cancel" position="after">
+                    <button name="order_close" string="Close" states="approved" type="object"/>
+                </button>
+
+                <button name="order_close" position="after">
+                    <button name="order_reopen" string="Re-open" states="done" type="object"/>
+                </button>
+
+                <field name="order_line" position="attributes">
+                    <attribute name="context">{'default_company_id': company_id, 'order_id': active_id}</attribute>
+                </field>
+
+                <xpath expr="//page[@string='Purchase Order']" position="after">
+                    <page string="Approval Items">
+                        <group col="5">
+                            <group colspan="4">
+                                <field name="approval_item_ids" nolabel="1" context="{'default_purchase_order_id': active_id}">
+                                    <tree string="">
+                                        <field name="purchase_order_id" invisible="1" />
+                                        <field name="analytical_account_id" />
+                                        <field name="amount" />
+                                        <field name="next_level" />
+                                        <field name="next_amount" />
+                                        <field name="next_approver_id" />
+                                        <field name="state" />
+                                        <button name="approve_item_level" string="Approve"
+                                            states="waiting" type="object" icon="gtk-go-forward" />
+                                    </tree>
+                                    <form>
+                                        <group colspan="4">
+                                            <field name="purchase_order_id" invisible="1" />
+                                            <field name="analytical_account_id" />
+                                            <field name="amount" />
+                                            <field name="next_level" />
+                                            <field name="next_amount" />
+                                            <field name="next_approver_id" />
+                                            <field name="state" />
+                                            <field name="line_ids" readonly="1">
+                                                <tree string="">
+                                                    <field name="approval_item_id" invisible="1" />
+                                                    <field name="name" />
+                                                    <field name="amount" />
+                                                    <field name="planned_approver_id" />
+                                                    <field name="is_approved" />
+                                                    <field name="actual_approver_id" />
+                                                    <field name="approval_timestamp" />
+                                                </tree>
+                                            </field>
+                                        </group>
+                                    </form>
+                                </field>
+                            </group>
+                            <group colspan="1">
+                                <button name="delete_all_approval_items" string="Delete all approval items"
+                                    states="draft" type="object" icon="gtk-delete" />
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="purchase_order_search">
+            <field name="name">purchase.order.search</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.view_purchase_order_filter" />
+            <field name="arch" type="xml">
+                <filter name="draft" position="after">
+                    <filter icon="terp-document-new" name="ready" string="Ready for final approval" domain="[('is_ready_for_final_approval', '=', True)]" help="Quotations with all items approved." />
+                </filter>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="purchase_order_tree">
+            <field name="name">purchase.order.tree</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_tree" />
+            <field name="arch" type="xml">
+                <field name="state" position="after">
+                    <field name="is_ready_for_final_approval" invisible="1" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="purchase.purchase_line_form_action2">
+            <!-- 'confirmed' state is not enough in our case, we require 'approved' PO lines for invoicing -->
+            <field name="domain">[('order_id.invoice_method', '&lt;&gt;', 'picking'), ('state', 'in', ('approved', 'done')), ('invoiced', '=', False)]</field>
+        </record>
+
+           <menuitem id="purchase.menu_procurement_management_invoice" name="Invoice Control"
+                       parent="base.menu_purchase_root" sequence="6" groups="group_invoice_approver"/>
+
+
+
+    </data>
+</openerp>

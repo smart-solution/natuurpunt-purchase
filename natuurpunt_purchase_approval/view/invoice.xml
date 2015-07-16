@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="supplier_invoice_form_approval">
+            <field name="name">supplier.invoice.form.approval.inherit</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form" />
+            <field name="arch" type="xml">
+                <data>
+                    <field name="state" position="attributes">
+                        <attribute name="statusbar_visible">draft,open,confirmed,approved,paid</attribute>
+                    </field>
+
+                    <button name="invoice_open" position="after">
+                        <button name="invoice_approve" invisible="1" states="confirmed" string="Approve" type="object" class="oe_highlight" groups="account.group_account_invoice" />
+                    </button>
+
+                    <button name="%(account.action_account_invoice_refund)d" position="attributes">
+                        <attribute name="states">open,confirmed,approved,paid</attribute>
+                    </button>
+                    
+                    <xpath expr="//field[@name='invoice_line']/tree//field[@name='product_id']" position="attributes">
+                        <attribute name="domain">[('purchase_ok','=',True)]</attribute>                        
+                    </xpath>
+
+                    <xpath expr="//page[@string='Invoice']" position="after">
+                        <page string="Approval Items">
+                            <group col="5">
+                                <group colspan="4">
+                                    <field name="approval_item_ids" nolabel="1" context="{'default_invoice_id': active_id}">
+                                        <tree string="">
+                                            <field name="invoice_id" invisible="1" />
+                                            <field name="analytical_account_id" />
+                                            <field name="amount" />
+                                            <field name="next_level" />
+                                            <field name="next_amount" />
+                                            <field name="next_approver_id" />
+                                            <field name="state" />
+                                            <button name="approve_item_level" string="Approve"
+                                                states="waiting" type="object" icon="gtk-go-forward" />
+                                        </tree>
+                                        <form>
+                                            <group colspan="4">
+                                                <field name="invoice_id" invisible="1" />
+                                                <field name="analytical_account_id" />
+                                                <field name="amount" />
+                                                <field name="next_level" />
+                                                <field name="next_amount" />
+                                                <field name="next_approver_id" />
+                                                <field name="state" />
+                                                <field name="line_ids" readonly="1">
+                                                    <tree string="">
+                                                        <field name="approval_item_id" invisible="1" />
+                                                        <field name="name" />
+                                                        <field name="amount" />
+                                                        <field name="planned_approver_id" />
+                                                        <field name="is_approved" />
+                                                        <field name="actual_approver_id" />
+                                                        <field name="approval_timestamp" />
+                                                    </tree>
+                                                </field>
+                                            </group>
+                                        </form>
+                                    </field>
+                                </group>
+                                <group colspan="1">
+                                    <button name="delete_all_approval_items" string="Delete all approval items"
+                                        states="draft" type="object" icon="gtk-delete" />
+                                </group>
+                            </group>
+                        </page>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+
+        <record id="pay_supplier_invoice" model="ir.ui.view">
+            <field name="name">account.invoice.supplier.pay</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account_voucher.view_invoice_supplier"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='invoice_pay_customer'][last()]" position="attributes">
+                    <attribute name="states">approved</attribute>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

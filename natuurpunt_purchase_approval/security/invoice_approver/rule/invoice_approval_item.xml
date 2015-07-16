@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+
+        <!-- rules are first evaluated by permission, then by domain -->
+
+        <record id="rule_own_invoice_approval_item_liness" model="ir.rule">
+            <field name="name">My Invoice Approval Item Liness</field>
+            <field name="model_id" ref="model_purchase_approval_item_line" />
+
+            <field name="perm_read" eval="False" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_unlink" eval="False" />
+
+            <!-- the planned approver on the approval item line must be the current user -->
+            <field name="domain_force">
+            [
+                '&amp;',
+                ('approval_item_id.invoice_id', '!=', False),
+                '|',
+                ('planned_approver_id', '=', user.id),
+                ('planned_approver_id.approval_substitute_id', '=', user.id),
+            ]
+            </field>
+
+            <field name="groups" eval="[(4, ref('group_invoice_approver'))]"/>
+        </record>
+
+    </data>
+</openerp>

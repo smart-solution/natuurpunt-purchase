@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+
+        <record id="view_purchase_requisition_order_attachment_wizard" model="ir.ui.view">
+            <field name="name">Attach File</field>
+            <field name="model">purchase.order.attachment.wizard</field>
+            <field name="arch" type="xml">
+            <form string="File Attach" version="7.0">
+                <group colspan="4">
+                    <field name="file_name" invisible="0" />
+                    <field name="file_data" filename="file_name"/>
+                </group>
+                <footer>
+                 <div name="puachase_requisition_order_file">
+                        <button name="file_attach" type="object" string="Attach File" class="oe_highlight"/>
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                 </div>
+                 </footer>
+            </form>
+            </field>
+        </record>
+
+        <record id="act_purchase_requisition_order_attachment_wizard" model="ir.actions.act_window">
+            <field name="name">Attach File</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchase.order.attachment.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_purchase_requisition_order_attachment_wizard"/>
+            <field name="target">new</field>
+        </record>
+
+        <record id="view_purchase_order_attach_form" model="ir.ui.view">
+            <field name="name">view.purchase.attach.form</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <button name="action_cancel" position="after">
+                    <button name="%(purchase_requisition_extended.act_purchase_requisition_order_attachment_wizard)d" string="Attach File"
+                            type="action" class="oe_highlight"/>
+                </button>
+            </field>
+        </record>
+
+
+
+
+	    <record model="ir.ui.view" id="view_purchase_quotations_requisition_form">
+	        <field name="name">purchase.quotations.requisition.form</field>
+	        <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_form"/>
+            <field name="priority">10</field>
+	        <field name="model">purchase.requisition</field>
+	        <field name="arch" type="xml">
+                	        	
+	        	<xpath expr="//field[@name='line_ids']/tree//field[@name='product_id']" position="replace">
+                    <field name="product_id" on_change="onchange_product_id(product_id,product_uom_id)" domain="[('purchase_ok','=',True)]"/>
+	            </xpath>
+
+	        </field>
+	    </record>
+
+    </data>
+</openerp>

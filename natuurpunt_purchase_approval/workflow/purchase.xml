@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="purchase.trans_confirmed_router" model="workflow.transition">
+            <field name="act_from" ref="purchase.act_confirmed"/>
+            <field name="act_to" ref="purchase.act_router"/>
+            <!-- re-enable former standard purchase_approve signal -->
+            <field name="signal">purchase_approve</field>
+        </record>
+
+    </data>
+</openerp>

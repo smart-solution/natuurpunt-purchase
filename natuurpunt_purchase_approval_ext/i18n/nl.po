@@ -1,0 +1,50 @@
+# Dutch translation for a Smart Solution module
+# Copyright (c) 2012-Today Smart Solution
+# FIRST AUTHOR <fabian.semal@smartsolution.be>
+#
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2013-06-07 19:37+0000\n"
+"PO-Revision-Date: 2013-07-13 22:42+0000\n"
+"Last-Translator: Fabian Semal <fabian.semal@smartsolution.be>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+
+#. module: lunch
+#: field:lunch.product,category_id:0
+#: field:lunch.product.category,name:0
+msgid "Category"
+msgstr "Categorie"
+
+#. module: natuurpunt_purchase_approval_ext
+#: code:addons/natuurpunt_purchase_approval_ext/natuurpunt_purchase_approval_ext.py:88
+msgid "-You have %s Purchase Orders waiting approval for company %s"
+msgstr "-Er wachten %s aankooporders op goedkeuring voor %s"
+
+#. module: natuurpunt_purchase_approval_ext
+#: code:addons/natuurpunt_purchase_approval_ext/natuurpunt_purchase_approval_ext.py:99
+msgid "-You have %s Invoices waiting approval for company %s"
+msgstr "-Er wachten %s facturen op goedkeuring voor %s"
+
+#. module: natuurpunt_purchase_approval_ext
+#: code:addons/natuurpunt_purchase_approval_ext/natuurpunt_purchase_approval_ext.py:108
+msgid "-You have %s Invoices to complete for company %s"
+msgstr "-Er zijn %s facturen ter controle voor %s"
+
+#. module: natuurpunt_purchase_approval_ext
+#: code:addons/natuurpunt_purchase_approval_ext/natuurpunt_purchase_approval_ext.py:87
+msgid "Purchase Approval Reminder"
+msgstr "Herinnering: Aankooporders goedkeuring"
+
+#. module: natuurpunt_purchase_approval_ext
+#: code:addons/natuurpunt_purchase_approval_ext/natuurpunt_purchase_approval_ext.py:98
+msgid "Invoice Approval Reminder"
+msgstr "Herinnering: Facturen goedkeuring"
+
+#. module: natuurpunt_purchase_approval_ext
+#: code:addons/natuurpunt_purchase_approval_ext/natuurpunt_purchase_approval_ext.py:107
+msgid "Invoice to Complete Reminder"
+msgstr "Herinnering: Facturen controle"
+

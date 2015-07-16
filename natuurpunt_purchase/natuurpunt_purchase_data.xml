@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+
+	<record id="purchase.menu_purchase_rfq" model="ir.ui.menu">
+		<field name="sequence">8</field>
+	</record>
+
+	<record id="purchase.menu_purchase_form_action" model="ir.ui.menu">
+		<field name="sequence">10</field>
+	</record>
+
+	<record id="purchase_requisition.menu_purchase_requisition_pro_mgt" model="ir.ui.menu">
+		<field name="sequence">2</field>
+	</record>
+
+    <delete model="ir.ui.menu" id="purchase.menu_action_picking_tree4"/>
+    <delete model="ir.ui.menu" id="purchase.menu_action_picking_tree_in_move"/>
+    <delete model="ir.ui.menu" id="purchase.menu_procurement_management_inventory"/>
+    <delete model="ir.ui.menu" id="purchase.menu_procurement_management_pending_invoice"/>
+    <delete model="ir.ui.menu" id="purchase.menu_action_picking_tree4_picking_to_invoice"/>
+    
+
+    </data>
+</openerp>

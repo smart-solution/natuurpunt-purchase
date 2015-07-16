@@ -1,0 +1,221 @@
+# Dutch translation for a Smart Solution module
+# Copyright (c) 2012-Today Smart Solution
+# FIRST AUTHOR <fabian.semal@smartsolution.be>
+#
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2013-06-07 19:37+0000\n"
+"PO-Revision-Date: 2013-07-13 22:42+0000\n"
+"Last-Translator: Fabian Semal <fabian.semal@smartsolution.be>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+
+#. module: purchase
+#: report:purchase.quotation:0
+msgid "Request for Quotation :"
+msgstr "Offertevraag:"
+
+#. module: purchase
+#: report:purchase.quotation:0
+msgid "Expected Delivery Address:"
+msgstr "Verwacht leveradres:"
+
+#. module: purchase
+#: report:purchase.order:0
+msgid "Purchase Order Confirmation N°"
+msgstr "Aankooporder"
+
+#. module: purchase
+#: report:purchase.quotation:0
+msgid "Contact person:"
+msgstr "Contactpersoon:"
+
+#. module: purchase
+#: report:purchase.quotation:0
+msgid "Order date:"
+msgstr "Aanvraagdatum:"
+
+#. module: purchase
+#: report:purchase.order:0
+msgid "Contact person:"
+msgstr "Contactpersoon:"
+
+#. module: natuurpunt_purchase
+#: report:purchase.order:0
+msgid "Discount %"
+msgstr "Korting %"
+
+#. module: purchase
+#: report:purchase.quotation:0
+#: report:purchase.order:0
+msgid "TIN : "
+msgstr "BTW : "
+
+#. module: natuurpunt_purchase
+#: report:purchase.quotation:0
+#: report:purchase.order:0
+msgid "TIN : "
+msgstr "BTW : "
+
+#. module: natuurpunt_purchase
+#: report:purchase.quotation:0
+#: report:purchase.order:0
+msgid "Our Order Reference:"
+msgstr "Onze order-referentie:"
+
+#. module: natuurpunt_purchase
+#: report:purchase.quotation:0
+#: report:purchase.order:0
+msgid "Order Date:"
+msgstr "Besteldatum:"
+
+#. module: purchase
+#: report:purchase.quotation:0
+#: report:purchase.order:0
+msgid "Our Order Reference:"
+msgstr "Onze order-referentie:"
+
+#. module: purchase
+#: report:purchase.quotation:0
+#: report:purchase.order:0
+msgid "Order Date:"
+msgstr "Besteldatum:"
+
+#. module: purchase
+#: report:purchase.quotation:0
+#: report:purchase.order:0
+msgid "Please pay attention to mandatory mentioning of our purchase order number on the invoice"
+msgstr "Gelieve ons aankoopordernummer verplicht te vermelden op factuur"
+
+#. module: purchase
+#: report:purchase.order:0
+msgid "Shipping address :"
+msgstr "Leveradres:"
+
+#. module: purchase
+#: report:purchase.order:0
+msgid "Net Total :"
+msgstr "Totaal excl BTW:"
+
+#. module: purchase
+#: report:purchase.order:0
+msgid "Purchase Order N°"
+msgstr "Aankooporder nr."
+
+#. module: natuurpunt_purchase
+#: report:purchase.order:0
+msgid "Total excl VAT:"
+msgstr "Totaal excl BTW:"
+
+#. module: purchase
+#: report:purchase.order:0
+msgid "Shipping address:"
+msgstr "Leveradres:"
+
+#. module: purchase
+#: report:purchase.quotation:0
+msgid "Request for Quotation:"
+msgstr "Offertevraag"
+
+#. module: purchase
+#: report:purchase.quotation:0
+msgid "VAT:"
+msgstr "BTW:"
+
+#. module: natuurpunt_purchase
+#: field:purchase.order.line,delivery_state:0
+msgid "Delivery Status"
+msgstr "Status levering"
+
+#. module: natuurpunt_purchase
+#: field:purchase.order.line,taxes_id:0
+msgid "Taxes"
+msgstr "BTW"
+
+#. module: natuurpunt_purchase
+#: field:purchase.order,default_po_currency:0
+msgid "Default Currency"
+msgstr "Munt"
+
+#. module: natuurpunt_purchase
+#: field:purchase.order,partner_delivery_id:0
+#: field:purchase.order,dest_address_id:0
+#: field:purchase.order.line,dest_address_id:0
+#: view:purchase.order:0
+msgid "Partner for Delivery"
+msgstr "Partner voor levering"
+
+#. module: purchase
+#: field:purchase.order,warehouse_id:0
+msgid "Destination Warehouse"
+msgstr "Bestemmings-magazijn"
+
+#. module: purchase
+#: model:ir.ui.menu,name:purchase.menu_purchase_form_action
+msgid "Purchase Orders"
+msgstr "Aankooporders"
+
+#. module: natuurpunt_purchase
+#: model:ir.ui.menu,name:natuurpunt_purchase.menu_purchase_order_line_delivery
+#: model:ir.actions.act_window,name:natuurpunt_purchase.action_purchase_order_line_delivery_tree
+msgid "Purchase Order Lines"
+msgstr "Aankooplijnen voor ontvangst"
+
+#. module: natuurpunt_purchase
+#: field:purchase.order.line,discount:0
+msgid "Discount (%)"
+msgstr "Korting (%)"
+
+#. module: purchase
+#: field:purchase.order.line,purchase_resp_id:0
+#: view:purchase.order.line:0
+msgid "Resp Req"
+msgstr "Verantw aanvraag"
+
+#. module: purchase
+#: view:purchase.order.line:0
+#: field:purchase.order.line,po_resp_id:0
+msgid "Resp Order"
+msgstr "Inkoopverantwoordelijke"
+
+#. module: purchase
+#: view:purchase.order.line:0
+msgid "Reopen for invoicing"
+msgstr "Heropen voor fact."
+
+#. module: purchase
+#: view:purchase.order.line:0
+msgid "Partner"
+msgstr "Relatie"
+
+#. module: purchase
+#: model:ir.actions.act_window,name:purchase.purchase_line_form_action2
+#: model:ir.ui.menu,name:purchase.menu_purchase_line_order_draft
+msgid "On Purchase Order Lines"
+msgstr "Op aankooplijnen"
+
+#. module: natuurpunt_purchase
+#: field:purchase.requisition.line,product_category_id:0
+msgid "Product Category"
+msgstr "Product-categorie"
+
+#. module: natuurpunt_purchase
+#: code:addons/natuurpunt_purchase/natuurpunt_purchase.py:101
+#, python-format
+msgid "You cannot delete approved purchase order lines."
+msgstr "Goedgekeurde aankooplijnen kunnen niet verwijderd worden."
+
+#. module: purchase
+#: view:purchase.order:0
+#: view:purchase.order:purchase.purchase_order_form
+msgid "Confirm Order"
+msgstr "Start Fiattering"
+
+#. module: purchase
+#: view:purchase.order.line.delivery:0
+#: model:ir.actions.act_window,name:natuurpunt_purchase.action_purchase_order_line_delivery
+msgid "Purchase Order Line Delivery"
+msgstr "Status levering voor aankooplijn"
+

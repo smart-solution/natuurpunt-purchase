@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- Purchases -->
+        <record id="group_purchase_approver" model="res.groups">
+            <field name="menu_access" eval="[(4, ref('base.menu_purchase_root'))]" />
+        </record>
+        <!-- Purchases > Purchase -->
+        <record id="group_purchase_approver" model="res.groups">
+            <field name="menu_access" eval="[(4, ref('purchase.menu_procurement_management'))]" />
+        </record>
+        <!-- Purchases > Purchase > Suppliers -->
+        <record id="group_purchase_approver" model="res.groups">
+            <field name="menu_access" eval="[(4, ref('base.menu_procurement_management_supplier_name'))]" />
+        </record>
+        <!-- Purchases > Purchase > Quotations -->
+        <record id="group_purchase_approver" model="res.groups">
+            <field name="menu_access" eval="[(4, ref('purchase.menu_purchase_rfq'))]" />
+        </record>
+        <!-- Purchases > Purchase > Purchase Orders -->
+        <record id="group_purchase_approver" model="res.groups">
+            <field name="menu_access" eval="[(4, ref('purchase.menu_purchase_form_action'))]" />
+        </record>
+        <!-- Purchases > Purchase > My Purchases to Approve -->
+        <record id="group_purchase_approver" model="res.groups">
+            <field name="menu_access" eval="[(4, ref('natuurpunt_purchase_approval.menu_purchase_approval_item'))]" />
+        </record>
+    </data>
+</openerp>
+

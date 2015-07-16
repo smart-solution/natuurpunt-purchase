@@ -1,0 +1,267 @@
+# -*- coding: utf-8 -*-
+##############################################################################
+#
+#    Smart Solution bvba
+#    Copyright (C) 2010-Today Smart Solution BVBA (<http://www.smartsolution.be>).
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Affero General Public License as
+#    published by the Free Software Foundation, either version 3 of the
+#    License, or (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Affero General Public License for more details.
+#
+#    You should have received a copy of the GNU Affero General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+############################################################################## 
+
+import time
+from openerp.osv import fields, osv
+from openerp import netsvc
+from openerp.osv.orm import browse_record, browse_null
+from openerp.tools.translate import _
+
+
+class purchase_order(osv.osv):
+
+        _inherit = "purchase.order"
+
+        _columns = {
+            'partner_delivery_id': fields.many2one('res.partner', 'Partner for Delivery'),
+            'default_po_currency': fields.related('pricelist_id', 'currency_id', type='many2one', relation='res.currency', string='Default Currency', readonly=True),
+
+        }
+
+        _defaults = {
+            'invoice_method': 'manual',
+        }
+
+        def create(self, cr, uid, vals, context=None):
+            """Adds the partner to deliver"""
+            if 'warehouse_id' in vals and vals['warehouse_id']:
+                warehouse = self.pool.get('stock.warehouse').browse(cr, uid, vals['warehouse_id'])
+                if warehouse.partner_id:
+                    vals['dest_address_id'] = warehouse.partner_id.id
+            return super(purchase_order, self).create(cr, uid, vals, context=context)
+
+        def onchange_warehouse_id(self, cr, uid, ids, warehouse_id):
+            if not warehouse_id:
+                return {}
+            warehouse = self.pool.get('stock.warehouse').browse(cr, uid, warehouse_id)
+            if warehouse.partner_id:
+                return {'value':{'location_id': warehouse.lot_input_id.id, 'dest_address_id': warehouse.partner_id.id}}
+            else:                
+                return {'value':{'location_id': warehouse.lot_input_id.id, 'dest_address_id': False}}
+
+        def status_rfq_sent(self, cr, uid, ids, context=None):
+            wf_service = netsvc.LocalService("workflow")
+            wf_service.trg_validate(uid, 'purchase.order', ids[0], 'send_rfq', cr)
+            return True
+
+class purchase_order_line(osv.osv):
+
+    _inherit = "purchase.order.line"
+
+    _columns = {
+        'requisition_id': fields.many2one('purchase.requisition', 'Purchase Requisition'),
+        'requisition_line_id': fields.many2one('purchase.requisition.line', 'Purchase Requisition Line'),
+        'delivery_state': fields.char('Delivery Status', size=128),
+        'po_state': fields.related('order_id','state', type="char", string='State', readonly=True),
+    }
+
+    _order = "product_id"
+
+
+purchase_order_line()
+
+class purchase_order_line_delivery(osv.osv_memory):
+
+    _name = "purchase.order.line.delivery"
+
+    _columns = {
+        'delivery_state': fields.char('Delivery Status', size=128)
+    }
+
+    def delivery_state_set(self, cr, uid, ids, context=None):
+        for wiz in self.browse(cr, uid ,ids):
+            self.pool.get('purchase.order.line').write(cr, uid, [context['active_id']], {'delivery_state':wiz.delivery_state})
+            po_line = self.pool.get('purchase.order.line').browse(cr, uid, context['active_id'])
+            user = self.pool.get('res.users').browse(cr, uid, uid)
+            log_vals = {
+                'author_id': user.partner_id.id,
+                'type': 'notification',
+                'model': 'purchase.order',
+                'res_id': po_line.order_id.id,
+                'body': "Delivery status of line %s <br/>Changed to : %s"%(po_line.name, wiz.delivery_state)
+            }
+            self.pool.get('mail.message').create(cr, uid, log_vals)
+        return True
+
+
+class purchase_requisition(osv.osv):
+
+    _inherit = 'purchase.requisition'
+
+    _columns = {
+    'purchase_line_ids': fields.one2many('purchase.order.line', 'requisition_id', 'Purchase Lines'),
+    }
+
+    _order = "date_start desc"
+
+    def copy(self, cr, uid, id, default=None, context=None):
+        """Do not copy purchase order line"""
+        if default == None:
+            default= {}
+        default['purchase_line_ids'] = []
+        default.update({'purchase_line_ids': []})
+        return super(purchase_requisition, self).copy(cr, uid, id, default=default, context=context)
+
+    def unlink(self, cr, uid, ids, context=None):
+        print "unlink context:",context
+        return super(purchase_requisition, self).unlink(cr, uid, ids, context=context)
+
+    def make_purchase_order(self, cr, uid, ids, partner_id, context=None):
+        """
+        Create New RFQ for Supplier
+        """
+        if context is None:
+            context = {}
+        assert partner_id, 'Supplier should be specified'
+        purchase_order = self.pool.get('purchase.order')
+        purchase_order_line = self.pool.get('purchase.order.line')
+        res_partner = self.pool.get('res.partner')
+        fiscal_position = self.pool.get('account.fiscal.position')
+        supplier = res_partner.browse(cr, uid, partner_id, context=context)
+        supplier_pricelist = supplier.property_product_pricelist_purchase or False
+        res = {}
+        for requisition in self.browse(cr, uid, ids, context=context):
+            if supplier.id in filter(lambda x: x, [rfq.state <> 'cancel' and rfq.partner_id.id or None for rfq in requisition.purchase_ids]):
+                 raise osv.except_osv(_('Warning!'), _('You have already one %s purchase order for this partner, you must cancel this purchase order to create a new quotation.') % rfq.state)
+            location_id = requisition.warehouse_id.lot_input_id.id
+            purchase_id = purchase_order.create(cr, uid, {
+                        'origin': requisition.name,
+                        'partner_id': supplier.id,
+                        'pricelist_id': supplier_pricelist.id,
+                        'location_id': location_id,
+                        'company_id': requisition.company_id.id,
+                        'fiscal_position': supplier.property_account_position and supplier.property_account_position.id or False,
+                        'requisition_id':requisition.id,
+                        'notes':requisition.description,
+                        'warehouse_id':requisition.warehouse_id.id ,
+            })
+            res[requisition.id] = purchase_id
+            for line in requisition.line_ids:
+                if 'requisition_lines' not in context or ('requisition_lines' in context and context['requisition_lines'] and line.id in context['requisition_lines']):
+                    product = line.product_id
+                    seller_price, qty, default_uom_po_id, date_planned = self._seller_details(cr, uid, line, supplier, context=context)
+                    taxes_ids = product.supplier_taxes_id
+                    taxes = fiscal_position.map_tax(cr, uid, supplier.property_account_position, taxes_ids)
+                    purchase_order_line.create(cr, uid, {
+                        'order_id': purchase_id,
+                        'name': line.name,
+                        'product_qty': qty,
+                        'product_id': product.id,
+                        'product_uom': default_uom_po_id,
+                        'price_unit': seller_price,
+                        'date_planned': date_planned,
+                        'price_unit' : line.product_price_unit,
+                        'taxes_id': [(6, 0, taxes)],
+                        'requisition_line_id': line.id
+                    }, context=context)
+
+        return res
+
+    _defaults = {
+        'exclusive': 'multiple',
+    }
+
+
+class purchase_requisition_line(osv.osv):
+
+    _inherit = 'purchase.requisition.line'
+    _rec_name = 'name'
+
+    _columns = {
+        'name': fields.text('Description', required=True),
+    'purchase_responsible_id': fields.many2one('res.users', 'Purchase Responsible'),
+    'product_price_unit': fields.float('Unit Price', digits=(16,4)),
+    'state': fields.selection([('draft','Draft'),('done','Done')], 'Status'),
+    'product_category_id': fields.many2one('product.category', 'Product Category'),
+    }
+
+    _defaults = {
+    'state': 'draft',
+    }
+
+    def onchange_product_id(self, cr, uid, ids, product_id, product_uom_id, context=None):
+        """ Changes UoM and name if product_id changes.
+        @param name: Name of the field
+        @param product_id: Changed product_id
+        @return:  Dictionary of changed values
+        """
+        value = {'product_uom_id': ''}
+        if product_id:
+            prod = self.pool.get('product.product').browse(cr, uid, product_id, context=context)
+            value = {'product_category_id':prod.categ_id.id, 'product_uom_id': prod.uom_id.id,'product_qty':1.0, 'name':prod.description, 'purchase_responsible_id':prod.categ_id.purchase_responsible_id and prod.categ_id.purchase_responsible_id.id or False, 'product_price_unit':prod.standard_price}
+        return {'value': value}
+
+
+    def create(self, cr, uid, vals, context=None):
+        print "VALS CREATE:",vals
+        if 'product_id' in vals and vals['product_id'] and 'product_category_id' not in vals:
+            product = self.pool.get('product.product').browse(cr, uid, vals['product_id'])
+            vals['product_category_id'] = product.categ_id.id
+        print "VALS2 CREATE:",vals
+        return super(purchase_requisition_line, self).create(cr, uid, vals, context=context)
+
+purchase_requisition_line()
+
+
+class purchase_requisition_line_partner(osv.osv_memory):
+    _name = "purchase.requisition.line.partner"
+    _description = "Purchase Requisition Line Partner"
+    _columns = {
+        'partner_id': fields.many2one('res.partner', 'Supplier', required=True,domain=[('supplier', '=', True)]),
+    }
+
+    def create_order(self, cr, uid, ids, context=None):
+        active_ids = context and context.get('active_ids', [])
+        data =  self.browse(cr, uid, ids, context=context)[0]
+        po_obj =  self.pool.get('purchase.order')
+        porders = []
+        preq =  []
+        for line in self.pool.get('purchase.requisition.line').browse(cr, uid, active_ids):
+            if line.state == 'draft':
+                if line.requisition_id.id in preq:
+                    context['skip_note'] = True
+                else:
+                    context['skip_note'] = False
+                    preq.append(line.requisition_id.id)
+                context['requisition_lines'] = [line.id]
+                res = self.pool.get('purchase.requisition').make_purchase_order(cr, uid, [line.requisition_id.id], data.partner_id.id, context=context)
+                print "MKRES:",res
+                porders.append(res[line.requisition_id.id])
+        print "PORDERS:",porders
+        # Merge the orders
+        po_obj.do_merge(cr, uid, porders, context)    
+        # Delete the old po's
+        old_pos = po_obj.search(cr, uid, [('id','in',porders),('state','=','cancel')])
+        po_obj.unlink(cr, uid, old_pos)    
+        return {'type': 'ir.actions.act_window_close'}
+
+purchase_requisition_line_partner()
+
+
+class product_category(osv.osv):
+
+    _inherit = 'product.category'
+
+    _columns = {
+        'purchase_responsible_id': fields.many2one('res.users', 'Purchase Responsible'),
+    }
+
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
