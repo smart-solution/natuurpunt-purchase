@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<openerp>
+   <data>
+
+         <record id="inherit_approval_item_search" model="ir.ui.view">
+            <field name="name">approval_item_search</field>
+            <field name="model">purchase.approval.item</field>
+            <field name="inherit_id" ref="natuurpunt_purchase_approval.approval_item_search" />
+            <field name="arch" type="xml">
+
+               <!-- add your filter at the end -->
+                <xpath expr="filter[@string='Purchase Order']" position="after">
+                     <filter string="Current Company" domain="[('company_id','=',0)]" />
+                </xpath>
+
+               <!-- add your group at the end -->
+                <xpath expr="//filter[@string='Partner']" position="after">
+                    <filter string="Company" domain="[]" context="{'group_by':'company_id'}"/>
+                </xpath>
+                </field>
+         </record>
+
+   </data>
+</openerp>

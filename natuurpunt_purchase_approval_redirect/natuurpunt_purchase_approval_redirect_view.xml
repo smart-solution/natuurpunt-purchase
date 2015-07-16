@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<openerp>
+   <data>
+
+        <record id="np_view_invoice_approval_redirect" model="ir.ui.view">
+            <field name="name">np.view.invoice.approval.redirect</field>
+            <field name="model">purchase.approval.item</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="natuurpunt_purchase_approval.invoice_approval_item_tree" />
+            <field name="arch" type="xml">
+                        <field name="invoice_id" position="after">
+                        <button name="redirect_to_invoice" string="redirect_to_invoice" type="object" icon="gtk-zoom-100"/>
+                        </field>
+            </field>
+        </record>
+        
+        <record id="np_view_purchase_approval_redirect" model="ir.ui.view">
+            <field name="name">np.view.purchase.approval.redirect</field>
+            <field name="model">purchase.approval.item</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="natuurpunt_purchase_approval.purchase_approval_item_tree" />
+            <field name="arch" type="xml">
+                        <field name="purchase_order_id" position="after">
+                        <button name="redirect_to_purchase_order" string="redirect_to_purchase_order" type="object" icon="gtk-zoom-100"/>
+                        </field>
+            </field>
+        </record>        
+
+   </data>
+</openerp>

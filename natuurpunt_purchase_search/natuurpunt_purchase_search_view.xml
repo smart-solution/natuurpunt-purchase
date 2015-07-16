@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<openerp>
+<data>
+     <record model="ir.ui.view" id="purchase_np_search_order_form">
+         <field name="name">purchase.np.search.order.form</field>
+         <field name="model">purchase.order</field>
+         <field name="type">form</field>
+         <field name="inherit_id" ref="purchase.purchase_order_form"/>
+         <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="replace">
+                <field name="product_id"
+                       required="1"
+                       on_change="onchange_product_id(parent.pricelist_id,product_id,0,False,parent.partner_id, parent.date_order,parent.fiscal_position,date_planned,name,price_unit,context)"
+                       context="{'search_view_ref':'product.product_search_form_view'}"/>
+            </xpath>
+         </field>
+     </record>
+     
+		<!-- https://answers.launchpad.net/openobject-server/+question/107722 -->
+		<!-- inheritance info that was usefull -->
+        <record model="ir.ui.view" id="purchase_requisition_np_search_form">
+                <field name="name">purchase.requisition.np.search.form</field>
+                <field name="model">purchase.requisition</field>
+                <field name="priority">15</field>
+                <field name="inherit_id" ref="natuurpunt_purchase.view_purchase_requisition_noproduct_form"/>
+                <field name="arch" type="xml">
+                        <xpath expr="//field[@name='line_ids']/tree/field[@name='product_id']" position="replace">
+                                <field name="product_id"
+                                       required="1"
+                                       context="{'search_view_ref':'product.product_search_form_view'}"
+                                       on_change="onchange_product_id(product_id,product_uom_id)"
+                                       domain="[('purchase_ok','=',True)]" />
+                        </xpath>
+                </field>
+        </record>
+     
+</data>
+</openerp>
+
