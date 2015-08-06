@@ -274,6 +274,9 @@ class account_invoice(orm.Model):
         if context is None:
             context = {}
 
+        if isinstance(ids, (int, long)):
+            ids = [ids]
+
         for invoice in self.browse(cr, uid, ids):
             if invoice.state == 'approved' and 'unblock' not in context:
                 # Check if invoice should be blocked
