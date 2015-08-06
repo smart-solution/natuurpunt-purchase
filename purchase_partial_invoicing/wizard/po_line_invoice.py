@@ -158,20 +158,20 @@ class account_invoice_line(orm.Model):
     _inherit = 'account.invoice.line'
 
 
-#    def _delivery_qty_get(self, cr, uid, ids, name, args, context=None):
-#        """Get the delivery qty from the po line"""
-#        res = {}
-#        for line in self.browse(cr, uid, ids, context):
-#            if line.purchase_order_line_ids: 
-#                res[line.id] = line.purchase_order_line_ids[0].delivery_quantity
-#            else:
-#                res[line.id] = 0.0
-#
-#        return res 
-#
-#    _columns = { 
-#        'po_delivery_qty': fields.function(_delivery_qty_get, method=True, string='Delivery Quantity', type="float", readonly=True, store=False),
-#    }   
+    def _delivery_qty_get(self, cr, uid, ids, name, args, context=None):
+        """Get the delivery qty from the po line"""
+        res = {}
+        for line in self.browse(cr, uid, ids, context):
+            if line.purchase_order_line_ids: 
+                res[line.id] = line.purchase_order_line_ids[0].delivery_quantity
+            else:
+                res[line.id] = 0.0
+
+        return res 
+
+    _columns = { 
+        'po_delivery_qty': fields.function(_delivery_qty_get, method=True, string='Delivery Quantity', type="float", readonly=True, store=False),
+    }   
 
     def write(self, cr, uid, ids, vals, context=None):
         """Remove the invoiced flag on po line if the invoice line amount is modified"""
