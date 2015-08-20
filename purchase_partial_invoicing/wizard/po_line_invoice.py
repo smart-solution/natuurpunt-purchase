@@ -282,11 +282,11 @@ class account_invoice(orm.Model):
                 # Check if invoice should be blocked
                 blocked = False
                 for line in invoice.invoice_line:
-                    if line.po_delivery_qty < line.purchase_order_line_ids[0].invoiced_qty:
+                    if line.purchase_order_line_ids and line.po_delivery_qty < line.purchase_order_line_ids[0].invoiced_qty:
                         self.write(cr, uid, ids, {'state':'payment_blocked'})
                         blocked = True
                         break
-                    if line.price_unit > line.purchase_order_line_ids[0].price_unit:
+                    if line.purchase_order_line_ids and line.price_unit > line.purchase_order_line_ids[0].price_unit:
                         self.write(cr, uid, ids, {'state':'payment_blocked'})
                         blocked = True
                         break
@@ -294,12 +294,12 @@ class account_invoice(orm.Model):
                 # Check if po should be closed
                 if not blocked:
                     for line in invoice.invoice_line:
-                        if line.purchase_order_line_ids[0].order_id.quantity_check:
+                        if line.purchase_order_line_ids and line.purchase_order_line_ids[0].order_id.quantity_check:
                             if line.purchase_order_line_ids[0].product_qty == line.quantity:
                                 self.pool.get('purchase.order').write(cr, uid, [line.purchase_order_line_ids[0].order_id.id], {'state':'done'})
                                 break
                         else:
-                            if line.purchase_order_line_ids[0].order_id.amount_total == line.invoice_id.amount_total:
+                            if line.purchase_order_line_ids and line.purchase_order_line_ids[0].order_id.amount_total == line.invoice_id.amount_total:
                                 self.pool.get('purchase.order').write(cr, uid, [line.purchase_order_line_ids[0].order_id.id], {'state':'done'})
                                 break
                 else:
