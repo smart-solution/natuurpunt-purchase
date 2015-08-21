@@ -22,12 +22,31 @@
 from osv import osv, fields
 from openerp.tools.translate import _
 import logging
+import socket
+import fcntl
+import struct
 
 _logger = logging.getLogger('natuurpunt_purchase_approval_ext')
 
 class purchase_approval_reminder(osv.osv_memory):
 
     _name = 'purchase.approval.reminder'
+
+    def get_ip_address(self,ifname):
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        return socket.inet_ntoa(fcntl.ioctl(
+            s.fileno(),
+            0x8915,  # SIOCGIFADDR
+            struct.pack('256s', ifname[:15])
+        )[20:24])
+
+    def get_eth0(self):
+	try:
+	    res = self.get_ip_address('eth0')
+	except IOError:
+            return 'ip unkown'
+        else:
+            return res
 
     def send_purchase_approval_reminders_email(self, cr, uid, user, msg_vals, context=None):
         """Send daily purchase approval reminders via e-mail"""
@@ -95,7 +114,8 @@ class purchase_approval_reminder(osv.osv_memory):
                 if po_items:
                     msg_vals = {
                         'subject': _("Purchase Approval Reminder"),
-                        'body': _("-You have %s Purchase Orders waiting approval for company %s")%(len(po_items), company.name),
+                        #'body': _("You have %s Purchase Orders waiting approval for company %s")%(len(po_items), company.name),
+                        'body': _("You have %s Purchase Orders waiting approval for company %s \nSend from host %s - db %s")%(len(po_items),company.name,self.get_eth0(),cr.dbname),	
                         'type': 'notification',
                         'notified_partner_ids': [(6,0,[user.partner_id.id])],
                     }
@@ -105,7 +125,7 @@ class purchase_approval_reminder(osv.osv_memory):
                 if inv_items:
                     msg_vals = {
                         'subject': _("Invoice Approval Reminder"),
-                        'body': _("-You have %s Invoices waiting approval for company %s")%(len(inv_items),company.name),
+                        'body': _("You have %s Invoices waiting approval for company %s \nSend from host %s - db %s")%(len(inv_items),company.name,self.get_eth0(),cr.dbname),
                         'type': 'notification',
                         'notified_partner_ids': [(6,0,[user.partner_id.id])],
                     }
@@ -115,7 +135,7 @@ class purchase_approval_reminder(osv.osv_memory):
                 if inv_comp:
                     msg_vals = {
                         'subject': _("Invoice to Complete Reminder"),
-                        'body': _("-You have %s Invoices to complete for company %s")%(len(inv_comp),company.name),
+                        'body': _("You have %s Invoices to complete for company %s \nSend from host %s - db %s")%(len(inv_comp),company.name,self.get_eth0(),cr.dbname),
                         'type': 'notification',
                         'notified_partner_ids': [(6,0,[user.partner_id.id])],
                     }
