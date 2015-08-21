@@ -237,6 +237,29 @@ class purchase_order_line(orm.Model):
         'delivery_quantity': fields.float('Delivered Quantity')
     }   
 
+    def write(self, cr, uid, ids, vals, context=None):
+        # Unblock invoice if qty delivered = or > then invoice qty
+        res = super(purchase_order_line, self).write(cr, uid, ids, vals=vals, context=context)
+        if context is None:
+            context = {}
+
+        if isinstance(ids, (int, long)):
+            ids = [ids]
+
+        for line in self.browse(cr, uid, ids):
+            if line.invoice_lines:
+                print "INVSTATE",line.invoice_lines[0].invoice_id.state
+            if line.invoice_lines and line.invoice_lines[0].invoice_id.state == 'payment_blocked':
+                print "PBLOCKED"
+                print "DEVQTY:",line.delivery_quantity
+                print "INVQTY:",line.invoiced_qty
+                if line.delivery_quantity >= line.invoiced_qty:
+                    print "YEP"
+                    self.pool.get('account.invoice').invoice_unblock(cr, uid, [line.invoice_lines[0].invoice_id.id], context=context)
+                    break
+
+        return res
+
 class account_invoice(orm.Model):
 
     _inherit = "account.invoice"
@@ -266,10 +289,12 @@ class account_invoice(orm.Model):
     def invoice_unblock(self, cr, uid, ids, context=None):
         context['unblock'] = True
         context['skip_write'] = True
+        print "INV UNBLOCK CONTEXT:",context
         self.write(cr, uid, ids, {'state':'approved'}, context=context)
         return True
 
     def write(self, cr, uid, ids, vals, context=None):
+        print "WRITE CONTEXT:",context
         res = super(account_invoice, self).write(cr, uid, ids, vals=vals, context=context)
         if context is None:
             context = {}
@@ -278,9 +303,10 @@ class account_invoice(orm.Model):
             ids = [ids]
 
         for invoice in self.browse(cr, uid, ids):
+            invoice_state = invoice.state
+            blocked = False
             if invoice.state == 'approved' and 'unblock' not in context:
                 # Check if invoice should be blocked
-                blocked = False
                 for line in invoice.invoice_line:
                     if line.purchase_order_line_ids and line.po_delivery_qty < line.purchase_order_line_ids[0].invoiced_qty:
                         self.write(cr, uid, ids, {'state':'payment_blocked'})
@@ -290,6 +316,14 @@ class account_invoice(orm.Model):
                         self.write(cr, uid, ids, {'state':'payment_blocked'})
                         blocked = True
                         break
+                if blocked:
+                    print "BLOCKED"
+
+#            if invoice.state == 'payment_blocked' and 'unblock' not in context:
+#                print "IN PB"
+#                # Unblock if qty or price unit changes
+#                if not blocked and invoice_state == 'payment_blocked':
+#                    self.invoice_unblock(cr, uid, ids, context=context)
 
                 # Check if po should be closed
                 if not blocked:
