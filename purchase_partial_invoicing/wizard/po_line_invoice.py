@@ -186,14 +186,9 @@ class account_invoice_line(orm.Model):
                 for po_line in line.purchase_order_line_ids:
                     po_lines_amount += po_line.price_subtotal
                     po_lines.append(po_line.id)
-                    print "INV PO LINE:",po_line.id
-                print "PO LINE AMOUNT",po_lines_amount
-                print "LINE AMOUNT",line.price_subtotal
                 if po_lines_amount != line.price_subtotal and not order_id.quantity_check:
-                    print "A"
                     self.pool.get('purchase.order.line').write(cr, uid, po_lines, {'invoiced':False})
                 if po_lines_amount == line.price_subtotal and not order_id.quantity_check:
-                    print "B"
                     self.pool.get('purchase.order.line').write(cr, uid, po_lines, {'invoiced':True})
         return res
 
