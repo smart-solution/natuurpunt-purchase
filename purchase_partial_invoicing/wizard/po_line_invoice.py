@@ -260,6 +260,11 @@ class purchase_order_line(orm.Model):
 
         return res
 
+    def copy(self, cr, id, default=None, context=None):
+        default['date_order'] = time.strftime('%Y-%m-%d')
+        default['delivery_quantity'] = 0
+        return super(purchase_order_line).copy(cr, uid, id, default=default, context=context)
+
 class account_invoice(orm.Model):
 
     _inherit = "account.invoice"
