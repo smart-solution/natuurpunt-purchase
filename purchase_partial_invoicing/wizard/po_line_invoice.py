@@ -213,6 +213,19 @@ class purchase_order_line_delivery(orm.TransientModel):
                 'body': "Delivery status of line %s <br/>Changed to : %s"%(po_line.name, wiz.delivery_state)
             }
             self.pool.get('mail.message').create(cr, uid, log_vals)
+
+        if po_line.invoice_lines and (wiz.delivery_quantity < po_line.invoiced_qty):
+            view_id = self.pool.get('ir.ui.view').search(cr, uid, [('name','=','Purchase Order Line Delivery Warning')])
+            return {
+                'type': 'ir.actions.act_window',
+                'name': 'Quantity Warning',
+                'view_mode': 'form',
+                'view_type': 'form',
+                'view_id': view_id[0],
+                'res_model': 'purchase.order.line.delivery',
+                'target': 'new',
+                'context': context,
+                }
         return True
 
     def default_get(self, cr, uid, fields, context=None):
@@ -269,6 +282,23 @@ class purchase_order_line(orm.Model):
                     break
 
         return res
+
+#    def onchange_delivery_quantity(self, cr, uid, ids, qty, context=None):
+#        print "ONCHANGE CALLED"
+#        line = self.browse(cr, uid, ids)[0]
+#        if qty < line.invoiced_qty:
+#            return {
+#                'type': 'ir.actions.client',
+#                'tag': 'action_warn',
+#                'name': 'Warning',
+#                'params': {
+#                   'title': 'Warning!',
+#                   'text': 'Invoiced Quantity is greater than delivered quantity.',
+#                   'sticky': True
+#                }
+#            }
+#        return True
+
 
     def copy(self, cr, uid, id, default=None, context=None):
         default['delivery_quantity'] = 0
