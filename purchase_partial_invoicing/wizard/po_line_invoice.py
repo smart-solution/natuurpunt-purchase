@@ -3,6 +3,7 @@ from __future__ import division
 from openerp.osv import fields, orm
 import openerp.addons.decimal_precision as dp
 from openerp.tools.translate import _
+import time
 
 class purchase_line_invoice(orm.TransientModel):
 
@@ -228,6 +229,14 @@ class purchase_order_line_delivery(orm.TransientModel):
         defaults['delivery_state'] = po_line.delivery_state or ""
         return defaults
 
+class purchase_order(orm.Model):
+
+    _inherit = 'purchase.order'
+
+    def copy(self, cr, uid, id, default=None, context=None):
+        default['date_order'] = time.strftime('%Y-%m-%d')
+        return super(purchase_order, self).copy(cr, uid, id, default=default, context=context)
+
 
 class purchase_order_line(orm.Model):
 
@@ -236,6 +245,12 @@ class purchase_order_line(orm.Model):
     _columns = { 
         'delivery_quantity': fields.float('Delivered Quantity')
     }   
+
+    def create(self, cr, uid, vals, context=None):
+        # Change date and reset delivered qty at copy of po
+        if '__copy_data_seen' in context:
+            vals['delivery_quantity'] = 0
+        return super(purchase_order_line, self).create(cr, uid, vals=vals, context=context)
 
     def write(self, cr, uid, ids, vals, context=None):
         # Unblock invoice if qty delivered = or > then invoice qty
@@ -260,10 +275,9 @@ class purchase_order_line(orm.Model):
 
         return res
 
-    def copy(self, cr, id, default=None, context=None):
-        default['date_order'] = time.strftime('%Y-%m-%d')
+    def copy(self, cr, uid, id, default=None, context=None):
         default['delivery_quantity'] = 0
-        return super(purchase_order_line).copy(cr, uid, id, default=default, context=context)
+        return super(purchase_order_line, self).copy(cr, uid, id, default=default, context=context)
 
 class account_invoice(orm.Model):
 
