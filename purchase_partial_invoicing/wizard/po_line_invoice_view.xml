@@ -45,6 +45,7 @@
         <record id="natuurpunt_purchase.view_purchase_order_line_delivery_wizard" model="ir.ui.view">
             <field name="name">Purchase Order Line Delivery</field>
             <field name="model">purchase.order.line.delivery</field>
+            <field name="priority">1</field>
             <field name="arch" type="xml">
                 <form string="Purchase Order Line Delivery" version="7.0">
                     <group>
@@ -59,6 +60,23 @@
                 </form>
             </field>
         </record>
+
+        <record id="view_purchase_order_line_delivery_warning_wizard" model="ir.ui.view">
+            <field name="name">Purchase Order Line Quantity Warning</field>
+            <field name="model">purchase.order.line_invoice</field>
+            <field name="priority">40</field>
+            <field name="arch" type="xml">
+                <form string="Purchase Order Line Delivery" version="7.0">
+                    <group>
+                        <label string="Warning! The delivered quantity is bigger then the invoiced quantity"/>
+                    </group>
+                    <footer>
+                        <button name="invoice_display" type="object" string="Ok" class="oe_link" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
 
     <record model="ir.ui.view" id="view_purchase_order_delivery_status_form">
         <field name="name">purchase.order.delivery.status.form</field>
@@ -99,6 +117,9 @@
             <xpath expr="//field[@name='invoice_line']/tree//field[@name='price_subtotal']" position="after">
                 <field name="po_delivery_qty"/>
            </xpath>
+                <xpath expr="//field[@name='invoice_line']/tree//field[@name='quantity']" position="replace">
+                    <field name="quantity" on_change="onchange_quantity(quantity)" context="{'supplier_invoice_id':active_id}"/>
+                </xpath>
 
         </field>
         </record>
@@ -123,7 +144,6 @@
         </record>
 
         <menuitem name="Invoices blocked for payment" id="menu_invoices_blocked" parent="purchase.menu_procurement_management_invoice" action="action_invoices_blocked" sequence="97" groups="purchase.group_purchase_manager"/>
-
 
     </data>
 </openerp>
