@@ -38,9 +38,12 @@ class purchase_line_invoice(orm.TransientModel):
         changed_lines = {}
         context['active_ids'] = []
         wizard = self.browse(cr, uid, ids[0], context=context)
+        warning = False
+        warning_log = ""
         for line in wizard.line_ids:
-#            if line.invoiced_qty > line.product_qty:
-#                raise orm.except_orm(_('Error'), _("""Quantity to invoice is greater than available quantity"""))
+            if line.invoiced_qty > line.product_qty:
+                warning = True
+                warning_log += 'The invoiced quantity (%s) is bigger then the purchase order line quantity (%s)\n'%(line.invoiced_qty, line.product_qty)
             context['active_ids'].append(line.po_line_id.id)
             changed_lines[line.po_line_id.id] = line.po_line_id.product_qty
             line.po_line_id.write({'product_qty': line.invoiced_qty})
@@ -60,8 +63,6 @@ class purchase_line_invoice(orm.TransientModel):
                 for order in orders:
                     notes += "%s \n" % order.notes
                 return notes
-
-
 
             def make_invoice_by_partner(partner, orders, lines_ids):
                 """
@@ -121,12 +122,21 @@ class purchase_line_invoice(orm.TransientModel):
                 invoiced_amount += inv_line.price_subtotal
             PurchaseOrderLine.write(cr, uid, [po_line.id], {'product_qty': changed_lines[po_line.id]}, context=context)
             if invoiced_qty != changed_lines[po_line.id] and po_line.order_id.quantity_check:
-                print "In 1"
                 po_line.write({'invoiced': False})
-#            if invoiced_amount != po_line.price_subtotal and not po_line.order_id.quantity_check:
-#                print "In 2"
-#                po_line.write({'invoiced': False})
 
+        if warning:
+            context['invoice_ids'] = res
+            view_id = self.pool.get('ir.ui.view').search(cr, uid, [('name','=','Purchase Order Line Quantity Warning')])
+            return {
+                'type': 'ir.actions.act_window',
+                'name': 'Quantity Warning',
+                'view_mode': 'form',
+                'view_type': 'form',
+                'view_id': view_id[0],
+                'res_model': 'purchase.order.line_invoice',
+                'target': 'new',
+                'context': context,
+                }
 
         return {
             'domain': "[('id','in', ["+','.join(map(str,res))+"])]",
@@ -139,6 +149,17 @@ class purchase_line_invoice(orm.TransientModel):
             'type': 'ir.actions.act_window'
         }
 
+    def invoice_display(self, cr, uid, ids, context=None):
+        return {
+            'domain': "[('id','in', context['invoice_ids'])]",
+            'name': _('Supplier Invoices'),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.invoice',
+            'view_id': False,
+            'context': "{'type':'in_invoice', 'journal_type': 'purchase'}",
+            'type': 'ir.actions.act_window'
+        }
 
 class purchase_line_invoice_line(orm.TransientModel):
 
@@ -190,7 +211,34 @@ class account_invoice_line(orm.Model):
                     self.pool.get('purchase.order.line').write(cr, uid, po_lines, {'invoiced':False})
                 if po_lines_amount == line.price_subtotal and not order_id.quantity_check:
                     self.pool.get('purchase.order.line').write(cr, uid, po_lines, {'invoiced':True})
+
+        for line in self.browse(cr, uid, ids):
+            if line.purchase_order_line_ids:
+                print "INVQTY:",line.purchase_order_line_ids[0].invoiced_qty
+                print "PRODQTY:",line.purchase_order_line_ids[0].product_qty
+                if line.purchase_order_line_ids[0].order_id.quantity_check and line.purchase_order_line_ids[0].invoiced_qty > line.purchase_order_line_ids[0].product_qty:
+                    print " IN IT "
+                    return {
+                       'type': 'ir.actions.client',
+                        'tag': 'action_warn',
+                        'name': 'Warning',
+                        'params': {
+                           'title': 'Warning!',
+                           'text': 'Invoiced Quantity (%s) is greater than the purchase order line  quantity (%s).'%(line.purchase_order_line_ids[0].invoiced_qty, line.purchase_order_line_ids[0].product_qty),
+                           'sticky': True
+                        }
+                    }
+
         return res
+    
+    def onchange_quantity(self, cr, uid, ids, quantity, context=None):
+        line = self.browse(cr, uid, ids)[0]
+        if line.purchase_order_line_ids:
+            inv_qty = line.purchase_order_line_ids[0].invoiced_qty - line.quantity + quantity
+            if line.purchase_order_line_ids[0].order_id.quantity_check and inv_qty > line.purchase_order_line_ids[0].product_qty:
+                return {'value':{},'warning':{'title':'warning','message':'Invoiced Quantity (%s) is greater than the purchase order line quantity (%s)'%(inv_qty, line.purchase_order_line_ids[0].product_qty)}} 
+        return {'value':{}} 
+
 
 class purchase_order_line_delivery(orm.TransientModel):
 
@@ -214,18 +262,18 @@ class purchase_order_line_delivery(orm.TransientModel):
             }
             self.pool.get('mail.message').create(cr, uid, log_vals)
 
-        if po_line.invoice_lines and (wiz.delivery_quantity < po_line.invoiced_qty):
-            view_id = self.pool.get('ir.ui.view').search(cr, uid, [('name','=','Purchase Order Line Delivery Warning')])
-            return {
-                'type': 'ir.actions.act_window',
-                'name': 'Quantity Warning',
-                'view_mode': 'form',
-                'view_type': 'form',
-                'view_id': view_id[0],
-                'res_model': 'purchase.order.line.delivery',
-                'target': 'new',
-                'context': context,
-                }
+#        if po_line.invoice_lines and (wiz.delivery_quantity < po_line.invoiced_qty):
+#            view_id = self.pool.get('ir.ui.view').search(cr, uid, [('name','=','Purchase Order Line Delivery Warning')])
+#            return {
+#                'type': 'ir.actions.act_window',
+#                'name': 'Quantity Warning',
+#                'view_mode': 'form',
+#                'view_type': 'form',
+#                'view_id': view_id[0],
+#                'res_model': 'purchase.order.line.delivery',
+#                'target': 'new',
+#                'context': context,
+#                }
         return True
 
     def default_get(self, cr, uid, fields, context=None):
@@ -270,35 +318,12 @@ class purchase_order_line(orm.Model):
             ids = [ids]
 
         for line in self.browse(cr, uid, ids):
-            if line.invoice_lines:
-                print "INVSTATE",line.invoice_lines[0].invoice_id.state
             if line.invoice_lines and line.invoice_lines[0].invoice_id.state == 'payment_blocked':
-                print "PBLOCKED"
-                print "DEVQTY:",line.delivery_quantity
-                print "INVQTY:",line.invoiced_qty
                 if line.delivery_quantity >= line.invoiced_qty:
-                    print "YEP"
                     self.pool.get('account.invoice').invoice_unblock(cr, uid, [line.invoice_lines[0].invoice_id.id], context=context)
                     break
 
         return res
-
-#    def onchange_delivery_quantity(self, cr, uid, ids, qty, context=None):
-#        print "ONCHANGE CALLED"
-#        line = self.browse(cr, uid, ids)[0]
-#        if qty < line.invoiced_qty:
-#            return {
-#                'type': 'ir.actions.client',
-#                'tag': 'action_warn',
-#                'name': 'Warning',
-#                'params': {
-#                   'title': 'Warning!',
-#                   'text': 'Invoiced Quantity is greater than delivered quantity.',
-#                   'sticky': True
-#                }
-#            }
-#        return True
-
 
     def copy(self, cr, uid, id, default=None, context=None):
         default['delivery_quantity'] = 0
@@ -333,12 +358,10 @@ class account_invoice(orm.Model):
     def invoice_unblock(self, cr, uid, ids, context=None):
         context['unblock'] = True
         context['skip_write'] = True
-        print "INV UNBLOCK CONTEXT:",context
         self.write(cr, uid, ids, {'state':'approved'}, context=context)
         return True
 
     def write(self, cr, uid, ids, vals, context=None):
-        print "WRITE CONTEXT:",context
         res = super(account_invoice, self).write(cr, uid, ids, vals=vals, context=context)
         if context is None:
             context = {}
@@ -360,14 +383,6 @@ class account_invoice(orm.Model):
                         self.write(cr, uid, ids, {'state':'payment_blocked'})
                         blocked = True
                         break
-                if blocked:
-                    print "BLOCKED"
-
-#            if invoice.state == 'payment_blocked' and 'unblock' not in context:
-#                print "IN PB"
-#                # Unblock if qty or price unit changes
-#                if not blocked and invoice_state == 'payment_blocked':
-#                    self.invoice_unblock(cr, uid, ids, context=context)
 
                 # Check if po should be closed
                 if not blocked:
@@ -397,7 +412,6 @@ class account_invoice_refund(orm.TransientModel):
         res = super(account_invoice_refund, self).invoice_refund(cr, uid, ids, context=context)
         inv_obj = self.pool.get('account.invoice')
         inv_line_obj = self.pool.get('account.invoice.line')
-        print "REFUND CONTEXT:",context
         # remove the link between the invoice and the po
         for invoice in inv_obj.browse(cr, uid, context['active_ids']):
 
