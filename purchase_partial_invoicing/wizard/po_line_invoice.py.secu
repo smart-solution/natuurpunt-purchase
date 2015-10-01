@@ -121,8 +121,7 @@ class purchase_line_invoice(orm.TransientModel):
                 invoiced_qty += inv_line.quantity
                 invoiced_amount += inv_line.price_subtotal
             PurchaseOrderLine.write(cr, uid, [po_line.id], {'product_qty': changed_lines[po_line.id]}, context=context)
-            #if invoiced_qty < changed_lines[po_line.id] and po_line.order_id.quantity_check:
-            if invoiced_qty < changed_lines[po_line.id]:
+            if invoiced_qty != changed_lines[po_line.id] and po_line.order_id.quantity_check:
                 po_line.write({'invoiced': False})
 
         if warning:
@@ -203,31 +202,22 @@ class account_invoice_line(orm.Model):
         for line in self.browse(cr, uid, ids):
             po_lines = []
             po_lines_amount = 0.0
-            po_lines_qty = 0.0
             if line.purchase_order_line_ids:
                 order_id = line.purchase_order_line_ids[0].order_id
                 for po_line in line.purchase_order_line_ids:
                     po_lines_amount += po_line.price_subtotal
-                    po_lines_qty += po_line.product_qty
                     po_lines.append(po_line.id)
-
-                    #if po_line.invoiced_qty < po_line.product_qty and order_id.quantity_check:
-                    if po_line.invoiced_qty < po_line.product_qty:
-                        self.pool.get('purchase.order.line').write(cr, uid, [po_line.id], {'invoiced':False})
-                    #if po_line.invoiced_qty >= po_line.product_qty and order_id.quantity_check:
-                    if po_line.invoiced_qty >= po_line.product_qty:
-                        self.pool.get('purchase.order.line').write(cr, uid, [po_line.id], {'invoiced':True})
-                #if po_lines_amount != line.price_subtotal and not order_id.quantity_check:
-                if po_lines_amount > line.price_subtotal and not order_id.quantity_check:
-                    # shouldnt it be only smaller ?
+                if po_lines_amount != line.price_subtotal and not order_id.quantity_check:
                     self.pool.get('purchase.order.line').write(cr, uid, po_lines, {'invoiced':False})
-                #if po_lines_amount == line.price_subtotal and not order_id.quantity_check:
-                if po_lines_amount <= line.price_subtotal and not order_id.quantity_check:
+                if po_lines_amount == line.price_subtotal and not order_id.quantity_check:
                     self.pool.get('purchase.order.line').write(cr, uid, po_lines, {'invoiced':True})
 
         for line in self.browse(cr, uid, ids):
             if line.purchase_order_line_ids:
+                print "INVQTY:",line.purchase_order_line_ids[0].invoiced_qty
+                print "PRODQTY:",line.purchase_order_line_ids[0].product_qty
                 if line.purchase_order_line_ids[0].order_id.quantity_check and line.purchase_order_line_ids[0].invoiced_qty > line.purchase_order_line_ids[0].product_qty:
+                    print " IN IT "
                     return {
                        'type': 'ir.actions.client',
                         'tag': 'action_warn',
@@ -242,11 +232,11 @@ class account_invoice_line(orm.Model):
         return res
     
     def onchange_quantity(self, cr, uid, ids, quantity, context=None):
-        for line in self.browse(cr, uid, ids):
-            if line.purchase_order_line_ids:
-                inv_qty = line.purchase_order_line_ids[0].invoiced_qty - line.quantity + quantity
-                if inv_qty > line.purchase_order_line_ids[0].product_qty:
-                    return {'value':{},'warning':{'title':'warning','message':'Invoiced Quantity (%s) is greater than the purchase order line quantity (%s)'%(inv_qty, line.purchase_order_line_ids[0].product_qty)}} 
+        line = self.browse(cr, uid, ids)[0]
+        if line.purchase_order_line_ids:
+            inv_qty = line.purchase_order_line_ids[0].invoiced_qty - line.quantity + quantity
+            if inv_qty > line.purchase_order_line_ids[0].product_qty:
+                return {'value':{},'warning':{'title':'warning','message':'Invoiced Quantity (%s) is greater than the purchase order line quantity (%s)'%(inv_qty, line.purchase_order_line_ids[0].product_qty)}} 
         return {'value':{}} 
 
 
@@ -328,12 +318,10 @@ class purchase_order_line(orm.Model):
             ids = [ids]
 
         for line in self.browse(cr, uid, ids):
-            if line.invoice_lines:
-                for inv_line in line.invoice_lines:
-                    if inv_line.invoice_id.state == 'payment_blocked':
-                        if line.delivery_quantity >= line.invoiced_qty:
-                            self.pool.get('account.invoice').invoice_unblock(cr, uid, [inv_line.invoice_id.id], context=context)
-                            #break
+            if line.invoice_lines and line.invoice_lines[0].invoice_id.state == 'payment_blocked':
+                if line.delivery_quantity >= line.invoiced_qty:
+                    self.pool.get('account.invoice').invoice_unblock(cr, uid, [line.invoice_lines[0].invoice_id.id], context=context)
+                    break
 
         return res
 

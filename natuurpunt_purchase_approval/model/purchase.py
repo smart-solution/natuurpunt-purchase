@@ -226,4 +226,3 @@ class purchase_order_line(osv.Model):
         if default is None:
             default = {}
         return super(purchase_order_line, self).copy(cr, uid, oid, default, context)
-

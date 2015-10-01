@@ -96,16 +96,21 @@ class AccountInvoice(osv.Model):
         # all related approved invoices, except the current invoice (which is not approved anyway)
         related_approved_invoice_ids = set()
         for order in invoice.purchase_order_ids:
+            print "### PO:",order.id
             for related_invoice_id in order.invoice_ids:
-                if related_invoice_id != invoice.id and related_invoice_id.state in ('approved', 'paid'):
+                print "### RINV:",related_invoice_id
+                if related_invoice_id != invoice.id and related_invoice_id.state in ('approved', 'paid', 'payment_blocked'):
                     related_approved_invoice_ids.add(related_invoice_id)
 
         # for all related approved invoices, aggregates all lines
         for invoice_id in related_approved_invoice_ids:
-            for approval_item in related_invoice_id.approval_item_ids:
+            #for approval_item in related_invoice_id.approval_item_ids:
+            for approval_item in invoice_id.approval_item_ids:
                 other_invoices_aggregated_accounts[approval_item.analytical_account_id.id] += approval_item.amount
+                print "### AI AMOUNT:",approval_item.amount
             # no need to test for unrestricted_amount since *invoice* approval_item_ids have been created without it (see account_invoice._aggregate_analytical_accounts)
 
+        print "### OIAA",other_invoices_aggregated_accounts
         return other_invoices_aggregated_accounts
 
     def create_all_approval_items(self, cr, uid, ids, context=None):
@@ -132,8 +137,14 @@ class AccountInvoice(osv.Model):
                 company_currency = invoice.company_id.currency_id
                 for (a_a_id, amount) in aggregated_accounts.items():
                     related_amount = other_invoices_aggregated_accounts[a_a_id] # KeyError -> 0.0
+                    #related_amount = 0
                     orders_amount = orders_aggregated_accounts[a_a_id] # no KeyError possible here
-                    approval_item_data = {'invoice_id': invoice.id, 'company_id': invoice.company_id.id, 'analytical_account_id': a_a_id, 'amount': amount + related_amount, 
+                    print "### invoice:",invoice.number
+                    print "### amount",amount
+                    print "### related amount",related_amount
+                    #approval_item_data = {'invoice_id': invoice.id, 'company_id': invoice.company_id.id, 'analytical_account_id': a_a_id, 'amount': amount + related_amount, 
+                    #                      'dimension_user_id':invoice.dimension_user_id.id}
+                    approval_item_data = {'invoice_id': invoice.id, 'company_id': invoice.company_id.id, 'analytical_account_id': a_a_id, 'amount': amount, 
                                           'dimension_user_id':invoice.dimension_user_id.id}
                     a_a = self.pool.get('account.analytic.account').browse(cr, uid, a_a_id, context=context)
                     # we keep the if clause without currency flavor as documentation
@@ -142,6 +153,7 @@ class AccountInvoice(osv.Model):
                     if ResCurrency.compare_amounts(cr, uid, company_currency, amount + related_amount - orders_amount, a_a.dimension_id.tolerance_absolute) <= 0 and \
                         ResCurrency.compare_amounts(cr, uid, company_currency, amount + related_amount, (1 + a_a.dimension_id.tolerance_percent/100) * orders_amount) <= 0:
                         # then we can auto-approve for this analytic account
+                        print "Auto Approve"
                         approval_item_data.update({'state': 'approved'})
                     approval_items.append(approval_item_data)
 
@@ -232,4 +244,11 @@ class AccountInvoiceLine(osv.Model):
             default = {}
         default['purchase_order_line_ids'] = []
         return super(AccountInvoiceLine, self).copy(cr, uid, oid, default, context)
+
+#    def write(self, cr, uid, ids, vals, context=None):
+#        """Check if the po line should still be available"""
+#        if 'quantity' in vals:
+#            for line in self.browse(cr, uid, ids):
+#
+#        return super(purchase_order_line, self).write(cr, uid, ids, vals=vals, context=context)
 
