@@ -23,6 +23,10 @@ from tools.translate import _
 
 class purchase_requisition(osv.osv):
     _inherit = 'purchase.requisition'
+
+    _columns = {
+        'purchase_order_line_ids': fields.one2many('purchase.order.line', 'requisition_id', 'Purchase Order Lines'),
+    }
     
     def uid_in_group_purchase_requisition_manager(self, cr, uid, context=None):
         mod_obj = self.pool.get('ir.model.data')

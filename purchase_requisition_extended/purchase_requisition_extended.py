@@ -36,15 +36,14 @@ class purchase_order_attachment_wizard(osv.osv_memory):
 
         return True
 
-#class purchase_requisition(osv.osv):
-#
-#    _inherit = 'purchase.requisition'
-#
-#    _columns = {
-#        'purchase_line_ids': fields.one2many('purchase.order.line', 'requisition_id', 'Purchase Lines'),
-#        'history': fields.text('History'),
-#    }
-#
+class purchase_requisition(osv.osv):
+
+    _inherit = 'purchase.requisition'
+
+    _columns = {
+        'purchase_order_line_ids': fields.one2many('purchase.order.line', 'requisition_id', 'Purchase Lines'),
+    }
+
 #    def copy(self, cr, uid, id, default=None, context=None):
 #        """Do not copy purchase order line"""
 #        if default == None:

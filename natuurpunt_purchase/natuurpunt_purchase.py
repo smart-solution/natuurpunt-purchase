@@ -124,7 +124,8 @@ class purchase_order_line(osv.osv):
     _columns = {
         'requisition_id': fields.many2one('purchase.requisition', 'Purchase Requisition'),
         'requisition_line_id': fields.many2one('purchase.requisition.line', 'Purchase Requisition Line'),
-        'purchase_resp_id': fields.related('requisition_line_id', 'requisition_id', 'user_id', type='many2one', relation='res.users', string='Resp Req', store=True),
+#        'purchase_resp_id': fields.related('requisition_line_id', 'requisition_id', 'user_id', type='many2one', relation='res.users', string='Resp Req', store=True),
+        'purchase_resp_id': fields.many2one('res.partner', 'Resp req'),
         'po_resp_id': fields.related('order_id', 'create_uid', type='many2one', relation='res.users', string='Resp Order', store=True),
         'delivery_state': fields.char('Delivery Status', size=128),
         'po_state': fields.related('order_id','state', type="char", string='State', readonly=True),
@@ -148,6 +149,13 @@ class purchase_order_line(osv.osv):
                 result['analytic_dimension_2_id'] = line.analytic_dimension_2_id.id
                 result['analytic_dimension_3_id'] = line.analytic_dimension_3_id.id
         return result
+
+
+    def create(self, cr, uid, vals, context=None):
+        if 'requisition_line_id' in vals and vals['requisition_line_id']:
+                req_line = self.pool.get('purchase.requisition.line').browse(cr, uid, vals['requisition_line_id'])
+                vals['purchase_resp_id'] = req_line.requisition_id.id
+        return super(purchase_order_line, self).create(cr, uid, vals=vals, context=context)
 
     def unlink(self, cr, uid, ids, context=None):
         for line in self.browse(cr, uid, ids):
