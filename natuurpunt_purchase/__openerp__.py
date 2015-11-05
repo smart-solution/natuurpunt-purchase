@@ -32,7 +32,7 @@
         'natuurpunt_purchase_view.xml',
         'natuurpunt_purchase_data.xml',
         'natuurpunt_purchase_report.xml',
-        'security/natuurpunt_purchase_security.xml',
+#        'security/natuurpunt_purchase_security.xml',
 #        'security/ir.model.access.csv'
         ],
     "active": False,
