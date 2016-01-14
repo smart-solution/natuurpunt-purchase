@@ -23,6 +23,10 @@ from tools.translate import _
 
 class purchase_requisition(osv.osv):
     _inherit = 'purchase.requisition'
+
+    _columns = {
+        'purchase_order_line_ids': fields.one2many('purchase.order.line', 'requisition_id', 'Purchase Order Lines'),
+    }
     
     def uid_in_group_purchase_requisition_manager(self, cr, uid, context=None):
         mod_obj = self.pool.get('ir.model.data')
@@ -52,5 +56,20 @@ class purchase_requisition(osv.osv):
         return super(purchase_requisition,self).fields_view_get(cr, uid, view_id=view_id, view_type=view_type, context=context, toolbar=toolbar, submenu=submenu)            
 
 purchase_requisition()
+
+class purchase_order_line(osv.osv):
+
+    _inherit = 'purchase.order.line'
+
+    _columns = {
+        'purchase_resp_id': fields.many2one('res.users', 'Resp req', required=True),
+    }
+
+    def create(self, cr, uid, vals, context=None):
+        if 'requisition_line_id' in vals and vals['requisition_line_id']:
+            req_line = self.pool.get('purchase.requisition.line').browse(cr, uid, vals['requisition_line_id'])
+            vals['purchase_resp_id'] = req_line.requisition_id.user_id.id
+        return super(purchase_order_line, self).create(cr, uid, vals=vals, context=context)
+
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
