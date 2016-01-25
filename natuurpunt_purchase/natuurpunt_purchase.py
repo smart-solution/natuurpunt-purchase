@@ -149,7 +149,6 @@ class purchase_order_line(osv.osv):
                 result['analytic_dimension_3_id'] = line.analytic_dimension_3_id.id
         return result
 
-
     def unlink(self, cr, uid, ids, context=None):
         for line in self.browse(cr, uid, ids):
             if line.state == 'approved':
