@@ -371,6 +371,67 @@
     <menuitem id="purchase.menu_procurement_management_product" name="Products"
           parent="base.menu_purchase_root" sequence="8" groups="purchase.group_purchase_manager"/>
 
+    <record model="ir.ui.view" id="view_natuurpunt_account_supplier_invoice_form">
+        <field name="name">view.natuurpunt_account.supplier.invoice.form</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.invoice_supplier_form"/>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+        	<field name="origin" position="replace">
+       			<field name="origin" string="Brondocument" class="oe_inline"/>
+       			<button colspan="2" name="view_origin_po" string="Brondocumenten" type="object" icon="gtk-execute" class="oe_inline"/>
+        	</field>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_origin_po_form">
+        <field name="name">view.origin.po.form</field>
+        <field name="model">view.origin.po</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+	        <form string="Brondocumenten">
+				<group colspan="4">
+					<field name="veld"/>
+				</group>
+				<group colspan="4">
+					<field name="po_line_ids" nolabel="1" widget="one2many_list">
+		                <form>
+			                <sheet>
+		                        <group>
+		                            <group>
+		                            	<field name="order_id"/>
+		                                <field name="product_id"/>
+		                                <label for="product_qty"/>
+		                                <div>
+		                                    <field name="product_qty"/>
+		                                    <field name="product_uom"/>
+		                                </div>
+		                                <field name="price_unit"/>
+		                            </group>
+		                            <group>
+		                                <field name="taxes_id" widget="many2many_tags" domain="[('parent_id','=',False),('type_tax_use','!=','sale')]"/>
+		                                <field name="date_planned" widget="date"/>
+		                                <field name="account_analytic_id" colspan="2" groups="purchase.group_analytic_accounting"/>
+		                                <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+		                            </group>
+		                        </group>
+		                        <notebook>
+		                        <page string="Notes">
+		                            <field name="name"/>
+		                        </page>
+		                        <page string="Invoices and Receptions">
+		                            <field name="invoice_lines"/>
+		                            <field name="move_ids"/>
+		                        </page>
+		                        </notebook>
+	 		                </sheet>
+ 		                </form>
+					</field>
+				</group>
+			</form>
+		</field>
+	</record>
+		
 
     </data>
 </openerp>
