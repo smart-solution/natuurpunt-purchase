@@ -51,7 +51,7 @@ class purchase_order(osv.Model):
                 raise osv.except_osv(error_functional_scope, detailed_msg)
             else:
                 delete_one2many = [(2, approval_item.id) for approval_item in po.approval_item_ids]
-                self.write(cr, uid, po.id, {'approval_item_ids': delete_one2many}, context)
+                self.write(cr, SUPERUSER_ID, po.id, {'approval_item_ids': delete_one2many}, context)
         return True
 
     def _aggregate_analytical_accounts(self, cr, uid, po, context=None):
