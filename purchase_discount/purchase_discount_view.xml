@@ -11,6 +11,7 @@
             </field>
         </field>
     </record>
+    <!-- #2288 remove field discount
     <record model="ir.ui.view" id="purchase_discount_order_line_tree">
         <field name="name">purchase_discount.order.line.tree</field>
         <field name="model">purchase.order.line</field>
@@ -22,7 +23,7 @@
             </field>
         </field>
     </record>
-    
+    -->
      <record model="ir.ui.view" id="purchase_discount_order_form">
          <field name="name">purchase.discount.order.form</field>
          <field name="model">purchase.order</field>
