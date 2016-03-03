@@ -26,6 +26,8 @@ class purchase_requisition(osv.osv):
 
     _columns = {
         'purchase_order_line_ids': fields.one2many('purchase.order.line', 'requisition_id', 'Purchase Order Lines'),
+        'state': fields.selection([('draft','New'),('in_progress','In Progress'),('cancel','Cancelled'),('done','Purchase Done')],
+              'Status', track_visibility='onchange', required=True),
     }
     
     def uid_in_group_purchase_requisition_manager(self, cr, uid, context=None):
@@ -56,6 +58,31 @@ class purchase_requisition(osv.osv):
         return super(purchase_requisition,self).fields_view_get(cr, uid, view_id=view_id, view_type=view_type, context=context, toolbar=toolbar, submenu=submenu)            
 
 purchase_requisition()
+
+class purchase_requisition_line(osv.osv):
+
+    _inherit = 'purchase.requisition.line'
+
+    def write(self, cr, uid, ids, vals, context=None):
+        """Change the status of the PR to In Progress when a line goes to status Done"""
+        """or to Done when all lines are done"""
+
+        if 'state' in vals and vals['state'] and vals['state'] == 'done':
+            for req_line in self.browse(cr, uid, ids):
+                if req_line.requisition_id.state in ('draft','in_progress'):
+
+                    # Check if all lines are done, if yes close the PR
+                    all_done = True
+                    for line in req_line.requisition_id.line_ids:
+                        if line.state == 'draft' and line.id not in ids:
+                            all_done == False
+
+                    if all_done:
+                        self.pool.get('purchase.requisition').write(cr, uid, [req_line.requisition_id.id], {'state':'done'})
+                    else:
+                        self.pool.get('purchase.requisition').write(cr, uid, [req_line.requisition_id.id], {'state':'in_progress'})
+
+        return super(purchase_requisition_line, self).write(cr, uid, ids, vals=vals, context=context)
 
 class purchase_order_line(osv.osv):
 
