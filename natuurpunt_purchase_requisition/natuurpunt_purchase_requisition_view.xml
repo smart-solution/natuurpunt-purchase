@@ -45,6 +45,9 @@
                 <field name="purchase_ids" position="replace">
                     <field name="purchase_order_line_ids" colspan="4" nolabel="1"/>
                 </field>
+                <field name="company_id" position="after">
+                    <button name="manually_generate_purchase_requisition_reminders" string="generate reminders" type="object" groups="purchase.group_purchase_manager"/>
+                </field>
             </field>
         </record>
 

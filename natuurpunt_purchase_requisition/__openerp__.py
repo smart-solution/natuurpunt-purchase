@@ -29,7 +29,8 @@
     using the uid of the logged in user. This custom module overrides this behaviour.
 """,
     "depends" : ["purchase_requisition",],
-    "data" : ["natuurpunt_purchase_requisition_view.xml"],
+    "data" : ["natuurpunt_purchase_requisition_view.xml",
+              "natuurpunt_purchase_requisition_data.xml"],
     "init_xml" : [],
     "update_xml" : [],
     "active": False,

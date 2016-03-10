@@ -20,6 +20,12 @@
 
 from osv import osv, fields
 from tools.translate import _
+from openerp import SUPERUSER_ID
+import logging
+from collections import defaultdict
+from natuurpunt_tools import get_eth0
+
+_logger = logging.getLogger('natuurpunt_purchase_requisition')
 
 class purchase_requisition(osv.osv):
     _inherit = 'purchase.requisition'
@@ -55,7 +61,72 @@ class purchase_requisition(osv.osv):
                 new_view_id = self.pool.get('ir.ui.view').search(cr,uid,[('name', '=', 'np.purchase.requisition.list.select')])
             assert(len(new_view_id) == 1)
             view_id = new_view_id[0]
-        return super(purchase_requisition,self).fields_view_get(cr, uid, view_id=view_id, view_type=view_type, context=context, toolbar=toolbar, submenu=submenu)            
+        return super(purchase_requisition,self).fields_view_get(cr, uid, view_id=view_id, view_type=view_type, context=context, toolbar=toolbar, submenu=submenu)
+
+    def send_purchase_requisition_reminders_email(self, cr, uid, user, msg_vals, context=None):
+        """Send daily purchase requisition reminders via e-mail"""
+        email_address = user.email_work
+        if email_address:
+            try:
+                data_obj = self.pool.get('ir.model.data')
+                template = data_obj.get_object(cr, uid, 'natuurpunt_purchase_requisition', 'email_template_purchase_requisition_reminder')
+            except ValueError:
+                raise osv.except_osv(_('Error!'),_("Cannot send email: no email template configured.\nYou can configure it under Settings/Technical/Email."))
+            assert template._name == 'email.template'
+            context['subject']   = msg_vals['subject']
+            context['email_to']  = email_address
+            context['body_html'] = msg_vals['body']
+            context['res_id']    = False
+
+            self.pool.get('email.template').send_mail(cr, uid, template.id, False, force_send=True, context=context)
+            _logger.info('mail %s: %s', msg_vals['subject'], email_address)
+            return True
+        else:
+            return True
+
+    def generate_purchase_requisition_reminders(self, cr, uid, context=None):
+        """Generate daily purchase requisition reminders"""
+        line_obj = self.pool.get('purchase.requisition.line')
+        msg_obj = self.pool.get('mail.message')
+
+        # get draft purchase requisitions
+        draft_prl = line_obj.search(cr, uid, [('state','=','draft'),])
+        purchase_req_ids = []
+        for line in line_obj.browse(cr, uid, draft_prl):
+            purchase_req_ids.append(line.requisition_id.id)
+
+        purchase_req_list = []
+        for purchase_requisition in self.browse(cr, uid, list(set(purchase_req_ids))):
+            purchase_req_list.append((purchase_requisition.user_id, purchase_requisition))
+
+        # group purchase requisition by user
+        purchase_req_per_user = defaultdict(list)
+        [purchase_req_per_user[k].append(v) for k, v in purchase_req_list]
+
+        def get_detail_lines_html_body():
+            base_url = self.pool.get('ir.config_parameter').get_param(cr, SUPERUSER_ID, 'web.base.url')
+            for purchase_requisition in purchase_requisition_list:
+                link = (" <b><a href='{}?db={}#id={}&view_type=form&model=purchase.requisition'>{}</a></b> ").format(base_url,
+                                                                                                              cr.dbname,  
+                                                                                                              purchase_requisition.id,
+                                                                                                              purchase_requisition.name)
+                line = link + _('(%s)')%(purchase_requisition.company_id.name) + '<br>' 
+                yield line
+
+        html_body_end = "<span><p><p/>"+_('Send from host %s - db %s')%(get_eth0(),cr.dbname)+"</span>"
+
+        for user,purchase_requisition_list in purchase_req_per_user.items():
+            msg_vals = {'subject': _('Purchase Requisition Reminder'),
+                        'body': ''.join(get_detail_lines_html_body()) + html_body_end,
+                        'type': 'notification',
+                        'notified_partner_ids': [(6,0,[user.partner_id.id])],
+                    }
+            msg_obj.create(cr, uid, msg_vals)
+            self.send_purchase_requisition_reminders_email(cr, uid, user, msg_vals, context=context)
+
+    def manually_generate_purchase_requisition_reminders(self, cr, uid, ids, context=None):
+        self.generate_purchase_requisition_reminders(cr, uid, context=context)
+        return True
 
 purchase_requisition()
 
