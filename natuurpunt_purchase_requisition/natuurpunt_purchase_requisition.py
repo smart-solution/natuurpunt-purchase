@@ -65,7 +65,7 @@ class purchase_requisition(osv.osv):
 
     def send_purchase_requisition_reminders_email(self, cr, uid, user, msg_vals, context=None):
         """Send daily purchase requisition reminders via e-mail"""
-        email_address = user.email_work
+        email_address = "joeri.belis@natuurpunt.be" #user.email_work
         if email_address:
             try:
                 data_obj = self.pool.get('ir.model.data')
@@ -91,13 +91,9 @@ class purchase_requisition(osv.osv):
 
         # get draft purchase requisitions
         draft_prl = line_obj.search(cr, uid, [('state','=','draft'),])
-        purchase_req_ids = []
-        for line in line_obj.browse(cr, uid, draft_prl):
-            purchase_req_ids.append(line.requisition_id.id)
-
         purchase_req_list = []
-        for purchase_requisition in self.browse(cr, uid, list(set(purchase_req_ids))):
-            purchase_req_list.append((purchase_requisition.user_id, purchase_requisition))
+        for line in line_obj.browse(cr, uid, draft_prl):
+            purchase_req_list.append((line.purchase_responsible_id,line.id))
 
         # group purchase requisition by user
         purchase_req_per_user = defaultdict(list)
@@ -105,13 +101,11 @@ class purchase_requisition(osv.osv):
 
         def get_detail_lines_html_body():
             base_url = self.pool.get('ir.config_parameter').get_param(cr, SUPERUSER_ID, 'web.base.url')
-            for purchase_requisition in purchase_requisition_list:
-                link = (" <b><a href='{}?db={}#id={}&view_type=form&model=purchase.requisition'>{}</a></b> ").format(base_url,
-                                                                                                              cr.dbname,  
-                                                                                                              purchase_requisition.id,
-                                                                                                              purchase_requisition.name)
-                line = link + _('(%s)')%(purchase_requisition.company_id.name) + '<br>' 
-                yield line
+            link = ("<b><a href='{}?db={}#view_type=list&model=purchase.requisition.line&menu_id=470'>{}</a></b> ")
+            line = link.format(base_url, 
+                               cr.dbname,
+                               _('%s concept inkoopaanvraaglijn(en)<br>')%(len(purchase_requisition_list)))
+            yield line
 
         html_body_end = "<span><p><p/>"+_('Send from host %s - db %s')%(get_eth0(),cr.dbname)+"</span>"
 

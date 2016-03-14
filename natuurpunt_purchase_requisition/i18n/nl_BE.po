@@ -33,9 +33,11 @@ msgstr "Herinnering: Inkoopaanvragen"
 
 #. module: natuurpunt_purchase_requisition
 #: model:email.template,body_html:natuurpunt_purchase_requisition.send_purchase_requisition_reminders_email
-msgid ""
-"\n"
-"<p>Reminder: You have following purchase requisitions with lines in status draft.</p>\n"
-"\n"
-"<p>${ctx.get('body_html')|safe}</p>\n"
-msgstr "\n<p>Herinnering: Volgende inkoopaanvragen hebben inkoopaanvraaglijnen in concept.</p>\n\n<p>${ctx.get('body_html')|safe}</p>"
+msgid "\n
+<p>Reminder: You have...</p>
+\n
+<p>${ctx.get('body_html')|safe}</p>"
+msgstr "\n
+<p>Herinnering: U heeft...</p>
+\n
+<p>${ctx.get('body_html')|safe}</p>"
