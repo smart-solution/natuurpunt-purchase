@@ -45,7 +45,7 @@ class purchase_approval_reminder(osv.osv_memory):
                 raise osv.except_osv(_('Error!'),_("Cannot send email: no email template configured.\nYou can configure it under Settings/Technical/Email."))
             assert template._name == 'email.template'
             context['subject']   = msg_vals['subject']
-            context['email_to']  = "joeri.Belis@natuurpunt.be" #user.email_work
+            context['email_to']  = user.email_work
             context['body_html'] = msg_vals['body']
             context['body']      = msg_vals['body']
             context['res_id']    = False
