@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <!-- Mail template are declared in a NOUPDATE block so users can freely customize/delete them -->
+    <data noupdate="1">
+        <!--Email template -->
+        <record id="email_template_purchase_approval_order_reminder" model="email.template">
+            <field name="name">purchase order approval reminder e-mail</field>
+            <field name="email_from">${(user.email or '')|safe}</field>
+            <field name="subject">${ctx.get('subject')}</field>
+            <field name="email_to">${ctx.get('email_to')}</field>
+            <field name="auto_delete" eval="True" />
+            <field name="model_id" ref="purchase.model_purchase_order" />
+			<field name="body_html"><![CDATA[
+<p>Purchase order ready to approve</p>
+
+<p>${ctx.get('body_html')|safe}</p>]]></field>
+        </record>
+    </data>
+
+</openerp>
