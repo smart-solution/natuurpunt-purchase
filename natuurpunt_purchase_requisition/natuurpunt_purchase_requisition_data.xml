@@ -2,16 +2,16 @@
 <openerp>
     <data noupdate="1">
 
-      <record forcecreate="True" id="ir_cron_purchase_approval_reminder" model="ir.cron">
-        <field name="name">Generation of reminders for the purchase approval process</field>
+      <record forcecreate="True" id="ir_cron_purchase_requisition_reminder" model="ir.cron">
+        <field name="name">Generation of reminders for the purchase requisition process</field>
         <field eval="False" name="active" />
         <field name="user_id" ref="base.user_root" />
         <field name="interval_number">1</field>
         <field name="interval_type">days</field>
         <field name="numbercall">-1</field>
         <field eval="False" name="doall" />
-        <field eval="'purchase.approval.reminder'" name="model" />
-        <field eval="'generate_purchase_approval_reminders'" name="function" />
+        <field eval="'purchase.requisition.reminder'" name="model" />
+        <field eval="'generate_purchase_requisition_reminders'" name="function" />
         <field eval="'()'" name="args" />
       </record>
     </data>
@@ -19,14 +19,17 @@
     <!-- Mail template are declared in a NOUPDATE block so users can freely customize/delete them -->
     <data noupdate="1">
         <!--Email template -->
-        <record id="email_template_purchase_approval_reminder" model="email.template">
-            <field name="name">approval reminder e-mail</field>
+        <record id="email_template_purchase_requisition_reminder" model="email.template">
+            <field name="name">purchase requisition reminder e-mail</field>
             <field name="email_from">${(user.email or '')|safe}</field>
             <field name="subject">${ctx.get('subject')}</field>
             <field name="email_to">${ctx.get('email_to')}</field>
             <field name="auto_delete" eval="True" />
             <field name="model_id" ref="base.model_res_users" />
-			<field name="body_html"><![CDATA[<p>${ctx.get('body_html')|safe}</p>]]></field>
+            <field name="body_html"><![CDATA[
+<p>Reminder: You have...</p>
+
+<p>${ctx.get('body_html')|safe}</p>]]></field>
         </record>
     </data>
 

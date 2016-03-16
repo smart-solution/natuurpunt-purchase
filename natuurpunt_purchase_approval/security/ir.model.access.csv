@@ -2,8 +2,8 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_purchase_approval_level_purchase,access.purchase.approval.level,model_purchase_approval_level,purchase.group_purchase_user,1,0,0,0
 access_purchase_approval_level_account,access.purchase.approval.level,model_purchase_approval_level,account.group_account_user,1,0,0,0
 access_purchase_approval_level_admin,access.purchase.approval.level,model_purchase_approval_level,base.group_system,1,1,1,1
-access_purchase_approval_item,access.purchase.approval.item,model_purchase_approval_item,purchase.group_purchase_user,1,0,1,0
-access_accountant_purchase_approval_item,access.accountant.purchase.approval.item,model_purchase_approval_item,purchase.group_purchase_user,1,1,1,1
+access_purchase_approval_item,access.purchase.approval.item,model_purchase_approval_item,purchase.group_purchase_user,1,1,1,0
+access_accountant_purchase_approval_item,access.accountant.purchase.approval.item,model_purchase_approval_item,account.group_account_user,1,1,1,0
 access_purchase_approval_item_line,access.purchase.approval.item.line,model_purchase_approval_item_line,purchase.group_purchase_user,1,0,1,0
 access_account_analytic_dimension_level_purchase,access.account.analytic.dimension.level,model_account_analytic_dimension_level,purchase.group_purchase_user,1,0,0,0
 access_account_analytic_dimension_level_account,access.account.analytic.dimension.level,model_account_analytic_dimension_level,account.group_account_user,1,0,0,0

@@ -272,18 +272,6 @@ class purchase_order_line_delivery(orm.TransientModel):
             }
             self.pool.get('mail.message').create(cr, uid, log_vals)
 
-#        if po_line.invoice_lines and (wiz.delivery_quantity < po_line.invoiced_qty):
-#            view_id = self.pool.get('ir.ui.view').search(cr, uid, [('name','=','Purchase Order Line Delivery Warning')])
-#            return {
-#                'type': 'ir.actions.act_window',
-#                'name': 'Quantity Warning',
-#                'view_mode': 'form',
-#                'view_type': 'form',
-#                'view_id': view_id[0],
-#                'res_model': 'purchase.order.line.delivery',
-#                'target': 'new',
-#                'context': context,
-#                }
         return True
 
     def default_get(self, cr, uid, fields, context=None):
@@ -316,6 +304,7 @@ class purchase_order_line(orm.Model):
         # Change date and reset delivered qty at copy of po
         if '__copy_data_seen' in context:
             vals['delivery_quantity'] = 0
+            vals['delivery_state'] = ""
         return super(purchase_order_line, self).create(cr, uid, vals=vals, context=context)
 
     def write(self, cr, uid, ids, vals, context=None):
@@ -339,6 +328,7 @@ class purchase_order_line(orm.Model):
 
     def copy(self, cr, uid, id, default=None, context=None):
         default['delivery_quantity'] = 0
+        default['delivery_state'] = ""
         return super(purchase_order_line, self).copy(cr, uid, id, default=default, context=context)
 
 class account_invoice(orm.Model):
@@ -411,8 +401,6 @@ class account_invoice(orm.Model):
                     for line in invoice.invoice_line:
                         self.pool.get('purchase.order').write(cr, uid, [line.purchase_order_line_ids[0].order_id.id], {'state':'approved'})
                         break
-
-
         return res
 
 

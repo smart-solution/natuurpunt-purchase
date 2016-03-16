@@ -25,28 +25,14 @@ import logging
 import socket
 import fcntl
 import struct
+from openerp import SUPERUSER_ID
+from natuurpunt_tools import get_eth0
 
 _logger = logging.getLogger('natuurpunt_purchase_approval_ext')
 
 class purchase_approval_reminder(osv.osv_memory):
 
     _name = 'purchase.approval.reminder'
-
-    def get_ip_address(self,ifname):
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        return socket.inet_ntoa(fcntl.ioctl(
-            s.fileno(),
-            0x8915,  # SIOCGIFADDR
-            struct.pack('256s', ifname[:15])
-        )[20:24])
-
-    def get_eth0(self):
-	try:
-	    res = self.get_ip_address('eth0')
-	except IOError:
-            return 'ip unkown'
-        else:
-            return res
 
     def send_purchase_approval_reminders_email(self, cr, uid, user, msg_vals, context=None):
         """Send daily purchase approval reminders via e-mail"""
@@ -60,7 +46,6 @@ class purchase_approval_reminder(osv.osv_memory):
             assert template._name == 'email.template'
             context['subject']   = msg_vals['subject']
             context['email_to']  = user.email_work
-            context['email_cc']  = 'joeri.belis@natuurpunt.be'
             context['body_html'] = msg_vals['body']
             context['body']      = msg_vals['body']
             context['res_id']    = False
@@ -79,9 +64,13 @@ class purchase_approval_reminder(osv.osv_memory):
         msg_obj = self.pool.get('mail.message')
         item_obj = self.pool.get('purchase.approval.item')
         user_obj = self.pool.get('res.users')
-        
+
         # we need to check all users because invoice to complete is possible for everybody
         users = user_obj.search(cr, uid, [])
+
+        html_body_end = "<span><p><p/>"+_('Send from host %s - db %s')%(get_eth0(),cr.dbname)+"</span>"
+        link = "<b><a href='{}?db={}#view_type=list&model={}&menu_id={}'>{}</a></b>"
+        base_url = self.pool.get('ir.config_parameter').get_param(cr, SUPERUSER_ID, 'web.base.url')
 
         companies = self.pool.get('res.company').search(cr, uid, [])
         for user in user_obj.browse(cr, uid, users):
@@ -112,10 +101,11 @@ class purchase_approval_reminder(osv.osv_memory):
                 context.update({'lang': user.lang})
 
                 if po_items:
+                    po_items_link = link.format(base_url,cr.dbname,'purchase.approval.item',728,_('Purchase Orders waiting approval'))
+                    body = _("You have {0} {1} for company {2}").format(len(po_items),po_items_link,company.name)
                     msg_vals = {
                         'subject': _("Purchase Approval Reminder"),
-                        #'body': _("You have %s Purchase Orders waiting approval for company %s")%(len(po_items), company.name),
-                        'body': _("You have %s Purchase Orders waiting approval for company %s \nSend from host %s - db %s")%(len(po_items),company.name,self.get_eth0(),cr.dbname),	
+                        'body': body + html_body_end,
                         'type': 'notification',
                         'notified_partner_ids': [(6,0,[user.partner_id.id])],
                     }
@@ -123,9 +113,11 @@ class purchase_approval_reminder(osv.osv_memory):
                     self.send_purchase_approval_reminders_email(cr, uid, user, msg_vals, context=context)
 
                 if inv_items:
+                    inv_items_link = link.format(base_url,cr.dbname,'purchase.approval.item',729,_('Invoices waiting approval'))
+                    body = _("You have {0} {1} for company {2}").format(len(inv_items),inv_items_link,company.name)
                     msg_vals = {
                         'subject': _("Invoice Approval Reminder"),
-                        'body': _("You have %s Invoices waiting approval for company %s \nSend from host %s - db %s")%(len(inv_items),company.name,self.get_eth0(),cr.dbname),
+                        'body': body + html_body_end,
                         'type': 'notification',
                         'notified_partner_ids': [(6,0,[user.partner_id.id])],
                     }
@@ -133,9 +125,11 @@ class purchase_approval_reminder(osv.osv_memory):
                     self.send_purchase_approval_reminders_email(cr, uid, user, msg_vals, context=context)
 
                 if inv_comp:
+                    inv_comp_link = link.format(base_url,cr.dbname,'account.invoice',526,_('Invoices to complete'))
+                    body = _("You have {0} {1} for company {2}").format(len(inv_comp),inv_comp_link,company.name)
                     msg_vals = {
                         'subject': _("Invoice to Complete Reminder"),
-                        'body': _("You have %s Invoices to complete for company %s \nSend from host %s - db %s")%(len(inv_comp),company.name,self.get_eth0(),cr.dbname),
+                        'body': body + html_body_end,
                         'type': 'notification',
                         'notified_partner_ids': [(6,0,[user.partner_id.id])],
                     }

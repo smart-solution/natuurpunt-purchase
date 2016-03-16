@@ -1,0 +1,43 @@
+# Dutch translation for a Smart Solution module
+# Copyright (c) 2012-Today Smart Solution
+# FIRST AUTHOR <fabian.semal@smartsolution.be>
+#
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2013-06-07 19:37+0000\n"
+"PO-Revision-Date: 2013-07-13 22:42+0000\n"
+"Last-Translator: Fabian Semal <fabian.semal@smartsolution.be>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. module: natuurpunt_purchase_requisition
+#: code:addons/natuurpunt_purchase_requisition/natuurpunt_purchase_requisition.py:107
+msgid "Purchase Requisition"
+msgstr "Inkoopaanvraag"
+
+#. module: natuurpunt_purchase_requisition
+#: code:addons/natuurpunt_purchase_requisition/natuurpunt_purchase_requisition.py:107
+msgid "for company %s"
+msgstr "voor %s"
+
+#. module: natuurpunt_purchase_requisition
+#: code:addons/natuurpunt_purchase_requisition/natuurpunt_purchase_requisition.py:109
+msgid "Purchase Requisitions:"
+msgstr "Inkoopaanvragen:"
+
+#. module: natuurpunt_purchase_requisition
+#: code:addons/natuurpunt_purchase_requisition/natuurpunt_purchase_requisition.py:113
+msgid "Purchase Requisition Reminder"
+msgstr "Herinnering: Inkoopaanvragen"
+
+#. module: natuurpunt_purchase_requisition
+#: model:email.template,body_html:natuurpunt_purchase_requisition.send_purchase_requisition_reminders_email
+msgid "\n
+<p>Reminder: You have...</p>
+\n
+<p>${ctx.get('body_html')|safe}</p>"
+msgstr "\n
+<p>Herinnering: U heeft...</p>
+\n
+<p>${ctx.get('body_html')|safe}</p>"

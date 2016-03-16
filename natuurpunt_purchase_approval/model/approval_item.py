@@ -61,6 +61,15 @@ class purchase_approval_item(osv.Model):
             res[pai.id] = invoice[0]['dimension_user_id']
         return res
 
+    def _store_get_values(self, cr, uid, ids, fields, context=None):
+        """force function_field 'line_id' to be stored first
+        because the stored related 'next_approver_id' field relies on its value
+        the default _store_get_values return an arbitrary list
+        """
+        return [(priority,model_name,record_ids,sorted(function_fields, key = lambda x: 0 if x=='line_id' else 1)) 
+                 for priority,model_name,record_ids,function_fields 
+                 in super(purchase_approval_item, self)._store_get_values(cr, uid, ids, fields, context)]
+
     _columns = {
         'purchase_order_id': fields.many2one('purchase.order', 'Purchase Order', select=True),
         'invoice_id': fields.many2one('account.invoice', 'Invoice', select=True),

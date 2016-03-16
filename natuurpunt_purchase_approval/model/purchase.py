@@ -1,8 +1,11 @@
 from openerp.osv import fields, osv
 from openerp import SUPERUSER_ID
 from openerp.tools.translate import _
-
+from natuurpunt_tools import get_eth0
 from collections import defaultdict
+import logging
+
+_logger = logging.getLogger('natuurpunt_purchase_approval')
 
 # TODO: check that whole procurement workflow stays consistent
 
@@ -15,6 +18,7 @@ class purchase_order(osv.Model):
         for po in self.browse(cr, uid, ids, context=context):
             if po.state == 'confirmed' and all(approval_item.state == 'approved' for approval_item in po.approval_item_ids):
                 res[po.id] = True
+                self.generate_purchase_order_reminder(cr, uid, po, context=context)
         return res
 
     _columns = {
@@ -43,6 +47,47 @@ class purchase_order(osv.Model):
         ),
     }
 
+    def generate_purchase_order_reminder(self, cr, uid, po, context=None):
+        """Generate purchase order reminder when final approval"""
+        msg_obj = self.pool.get('mail.message')
+
+        def get_html_body():
+            base_url = self.pool.get('ir.config_parameter').get_param(cr, SUPERUSER_ID, 'web.base.url')
+            link = ("<b><a href='{}?db={}#id={}&view_type=form&model=purchase.order&action=458'>{}</a></b>")
+            line = link.format(base_url, cr.dbname, po.id, po.name)
+            html_body_end = "<span><p><p/>"+_('Send from host %s - db %s')%(get_eth0(),cr.dbname)+"</span>"
+            yield line + html_body_end
+
+        user = po.create_uid
+
+        msg_vals = {'subject': _('Purchase Order Approval Reminder'),
+                    'body': ''.join(get_html_body()),
+                    'type': 'notification',
+                    'notified_partner_ids': [(6,0,[user.partner_id.id])],
+                    }
+        msg_obj.create(cr, uid, msg_vals)
+        self.send_purchase_order_reminder_email(cr, uid, user, msg_vals, context=context)
+
+    def send_purchase_order_reminder_email(self, cr, uid, user, msg_vals, context=None):
+        """Send purchase order approval reminder via e-mail"""
+
+        if user.email_work:
+            try:
+                data_obj = self.pool.get('ir.model.data')
+                template = data_obj.get_object(cr, uid, 'natuurpunt_purchase_approval', 'email_template_purchase_approval_order_reminder')
+            except ValueError:
+                raise osv.except_osv(_('Error!'),_("Cannot send email: no email template configured.\nYou can configure it under Settings/Technical/Email."))
+            assert template._name == 'email.template'
+            context['subject']   = msg_vals['subject']
+            context['email_to']  = user.email_work
+            context['body_html'] = msg_vals['body']
+            context['res_id']    = False
+            self.pool.get('email.template').send_mail(cr, uid, template.id, False, force_send=True, context=context)
+            _logger.info('mail %s: %s', msg_vals['subject'], user.email_work)
+            return True
+        else:
+            return True
+
     def delete_all_approval_items(self, cr, uid, ids, context=None):
         for po in self.browse(cr, uid, ids, context):
             if po.state != 'draft':
@@ -51,7 +96,7 @@ class purchase_order(osv.Model):
                 raise osv.except_osv(error_functional_scope, detailed_msg)
             else:
                 delete_one2many = [(2, approval_item.id) for approval_item in po.approval_item_ids]
-                self.write(cr, uid, po.id, {'approval_item_ids': delete_one2many}, context)
+                self.write(cr, SUPERUSER_ID, po.id, {'approval_item_ids': delete_one2many}, context)
         return True
 
     def _aggregate_analytical_accounts(self, cr, uid, po, context=None):

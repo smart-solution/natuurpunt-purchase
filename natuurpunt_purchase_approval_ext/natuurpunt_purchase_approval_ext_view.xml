@@ -27,6 +27,24 @@
         <record id="purchase.act_res_partner_2_supplier_invoices" model="ir.actions.act_window">
             <field name="domain">[('type','=','in_invoice'),('partner_id','=',active_id)]</field>
         </record>
+    
+        <!-- feature #2289 Purchases > Purchase Order Lines -->
+        <record model="ir.ui.view" id="view_purchase_order_line_delivery_tree_inherit">
+            <field name="name">view_purchase_order_line_delivery_tree_inherit</field>
+            <field name="model">purchase.order.line</field>
+            <field name="inherit_id" ref="natuurpunt_purchase.view_purchase_order_line_delivery_tree" />
+            <field name="arch" type="xml">
+                <field name="name" position="replace">
+                    <field name="name" width="50"/>
+                    <field name="analytic_dimension_1_id" width="10"/>
+                    <field name="analytic_dimension_2_id" width="10"/>
+                    <field name="analytic_dimension_3_id" width="10"/>
+                </field>
+                <field name="date_planned" position="replace">
+                    <field name="date_planned" invisible="1"/>
+                </field>
+            </field>
+        </record>
 
     </data>
 </openerp>

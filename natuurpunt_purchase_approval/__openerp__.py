@@ -13,6 +13,7 @@
         'natuurpunt_membership',
     ],
     'data': [
+        'data/natuurpunt_purchase_approval_data.xml',
         'security/res.groups.csv',
         'security/ir.model.access.csv',
         'security/purchase_approver/right/ir.model.access.csv',

@@ -41,6 +41,13 @@ class purchase_order_line(osv.osv):
     }
 purchase_order_line()
 
+class product_uom(osv.osv):
+    _inherit = 'product.uom'
 
+    def name_search(self, cr, uid, name, args=None, operator='ilike', context=None, limit=100):
+        res = super(product_uom, self).name_search(
+                 cr, uid, name, args, operator=operator, context=context, limit=limit)
+        # sort on single letter name, ex. 'm' meters so it is before 'cm'
+        return sorted(res, key=lambda item: 0 if item[1] == name else 1)
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

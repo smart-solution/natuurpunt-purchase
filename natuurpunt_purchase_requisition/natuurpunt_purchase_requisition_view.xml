@@ -42,14 +42,40 @@
             <field name="priority">10</field>
             <field name="model">purchase.requisition</field>
             <field name="arch" type="xml">
-
                 <field name="purchase_ids" position="replace">
                     <field name="purchase_order_line_ids" colspan="4" nolabel="1"/>
                 </field>
-
+                <field name="company_id" position="after">
+                    <button name="manually_generate_purchase_requisition_reminders" string="generate reminders" type="object" groups="purchase.group_purchase_manager"/>
+                </field>
             </field>
         </record>
 
+        <record model="ir.ui.view" id="view_np_purchase_quotations_requisition_nobutton__form">
+            <field name="name">view.np.purchase.quotations.requisition.nobutton_form</field>
+            <field name="inherit_id" ref="natuurpunt_purchase.view_purchase_requisition_noproduct_form"/>
+            <field name="priority">10</field>
+            <field name="model">purchase.requisition</field>
+            <field name="arch" type="xml">
+                <button name="tender_done" position="replace">
+                    <button name="tender_done" invisible="1"/>
+                </button>
+                <xpath expr="//field[@name='line_ids']/tree//field[@name='state']" position="replace">
+                    <field name="state" readonly="True"/>
+                </xpath>
+            </field>
+        </record>
+
+       <record id="purchase_requisition_line_tree" model="ir.ui.view">
+            <field name="name">purchase.requisition.line.tree</field>
+            <field name="model">purchase.requisition.line</field>
+            <field name="inherit_id" ref="natuurpunt_purchase.purchase_requisition_line_tree"/>
+            <field name="arch" type="xml">
+                <field name="state" position="replace">
+                    <field name="state" readonly="True"/>
+                </field>
+            </field>
+        </record>
 
    </data>
 </openerp>

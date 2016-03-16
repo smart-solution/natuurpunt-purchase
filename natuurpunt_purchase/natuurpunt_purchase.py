@@ -418,5 +418,44 @@ class product_category(osv.osv):
     _columns = {
         'purchase_responsible_id': fields.many2one('res.users', 'Purchase Responsible'),
     }
+    
+class account_invoice(osv.osv):
+    
+    _inherit = 'account.invoice'
+    
+    def view_origin_po(self, cr, uid, ids, context=None):
+        view_id = self.pool.get('ir.ui.view').search(cr, uid, [('model','=','view.origin.po'),
+                                                            ('name','=','view.origin.po.form')])
+
+        invoice = self.browse(cr, uid, ids)[0]
+        context['default_veld'] = invoice.number
+        po_line_ids = []
+        for inv_line in invoice.invoice_line:
+            po_line_ids += [polines.id for polines in inv_line.purchase_order_line_ids]
+        context['default_po_line_ids'] = po_line_ids
+
+# fill needed fields in context
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Brondocumenten',
+            'view_mode': 'form',
+            'view_type': 'form',
+            'view_id': view_id[0],
+            'res_model': 'view.origin.po',
+            'target': 'new',
+            'context': context,
+            }
+        
+# zie natuurpunt_bankstatement (create_partner)
+
+class view_origin_po(osv.osv_memory):
+    _name = "view.origin.po"
+    
+    _columns = {
+        'veld': fields.char('Naam'),
+        'po_line_ids': fields.many2many('purchase.order.line', 'purchase_order_line_invoice_rel', 'invoice_id', 'order_line_id', 'Purchase Order Lines', readonly=True),
+        }
+    
+
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
