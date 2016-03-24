@@ -32,7 +32,7 @@ class purchase_requisition(osv.osv):
 
     _columns = {
         'purchase_order_line_ids': fields.one2many('purchase.order.line', 'requisition_id', 'Purchase Order Lines'),
-        'state': fields.selection([('draft','New'),('in_progress','In Progress'),('cancel','Cancelled'),('done','Purchase Done')],
+        'state': fields.selection([('draft','New'),('in_progress','In verwerking'),('cancel','Cancelled'),('done','Purchase Done')],
               'Status', track_visibility='onchange', required=True),
     }
     
@@ -131,7 +131,6 @@ class purchase_requisition_line(osv.osv):
     def write(self, cr, uid, ids, vals, context=None):
         """Change the status of the PR to In Progress when a line goes to status Done"""
         """or to Done when all lines are done"""
-
         if 'state' in vals and vals['state'] and vals['state'] == 'done':
             for req_line in self.browse(cr, uid, ids):
                 if req_line.requisition_id.state in ('draft','in_progress'):
@@ -140,7 +139,13 @@ class purchase_requisition_line(osv.osv):
                     all_done = True
                     for line in req_line.requisition_id.line_ids:
                         if line.state == 'draft' and line.id not in ids:
-                            all_done == False
+                            all_done = False
+
+                    # check if all purchase order are in status approved
+                    if all_done:
+                        for order in req_line.requisition_id.purchase_order_line_ids:
+                            if order.order_id.state != 'approved':
+                                all_done = False
 
                     if all_done:
                         self.pool.get('purchase.requisition').write(cr, uid, [req_line.requisition_id.id], {'state':'done'})
@@ -148,6 +153,30 @@ class purchase_requisition_line(osv.osv):
                         self.pool.get('purchase.requisition').write(cr, uid, [req_line.requisition_id.id], {'state':'in_progress'})
 
         return super(purchase_requisition_line, self).write(cr, uid, ids, vals=vals, context=context)
+
+class purchase_order(osv.osv):
+
+    _inherit = 'purchase.order'
+
+    def write(self, cr, uid, ids, vals, context=None):
+        res = super(purchase_order, self).write(cr, uid, ids, vals, context=context)
+
+        if 'state' in vals and vals['state'] == 'approved':
+            for po in self.browse(cr, uid, ids):
+                for poline in po.order_line:
+                    if poline.requisition_line_id:
+     
+                        # Check if all po's from the purchase requisition are approved
+                        all_done = True
+                        for orderline in poline.requisition_line_id.requisition_id.purchase_order_line_ids:
+                            if orderline.order_id.state != 'approved':
+                                all_done = False
+
+                        if all_done:
+                            self.pool.get('purchase.requisition').write(cr, uid, [poline.requisition_line_id.requisition_id.id], {'state':'done'})
+
+        return res 
+
 
 class purchase_order_line(osv.osv):
 

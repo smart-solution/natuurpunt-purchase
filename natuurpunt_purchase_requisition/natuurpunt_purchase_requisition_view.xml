@@ -43,7 +43,21 @@
             <field name="model">purchase.requisition</field>
             <field name="arch" type="xml">
                 <field name="purchase_ids" position="replace">
-                    <field name="purchase_order_line_ids" colspan="4" nolabel="1"/>
+                   <field name="purchase_order_line_ids" colspan="4" nolabel="1">
+                      <tree string="Aankooporder lijnen">
+                        <field name="order_id"/>
+                        <field name="name"/>
+                        <field name="partner_id"/>
+                        <field name="product_id"/>
+                        <field name="price_unit"/>
+                        <field name="product_qty"/>
+                        <field name="product_uom" groups="product.group_uom"/>
+                        <!--  <field name="invoiced_qty"/>-->
+                        <field name="price_subtotal"/> 
+                        <field name="date_planned" widget="date"/> 
+                        <field name="state"/>
+                      </tree>
+                    </field>
                 </field>
                 <field name="company_id" position="after">
                     <button name="manually_generate_purchase_requisition_reminders" string="generate reminders" type="object" groups="purchase.group_purchase_manager"/>
