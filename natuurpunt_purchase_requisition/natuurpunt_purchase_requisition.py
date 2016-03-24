@@ -32,7 +32,7 @@ class purchase_requisition(osv.osv):
 
     _columns = {
         'purchase_order_line_ids': fields.one2many('purchase.order.line', 'requisition_id', 'Purchase Order Lines'),
-        'state': fields.selection([('draft','New'),('in_progress','In Progress'),('cancel','Cancelled'),('done','Purchase Done')],
+        'state': fields.selection([('draft','New'),('in_progress','In verwerking'),('cancel','Cancelled'),('done','Purchase Done')],
               'Status', track_visibility='onchange', required=True),
     }
     
