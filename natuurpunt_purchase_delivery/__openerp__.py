@@ -30,8 +30,8 @@
     default filter deliverd quantity < ordered quantity
     Feature #2290
 """,
-    "depends" : ["natuurpunt_purchase"],
-    "data" : ["natuurpunt_purchase_delivery_view.xml"],
+    "depends" : ["purchase_partial_invoicing"],
+    "data" : ["natuurpunt_purchase_delivery_view.xml"], 
     "init_xml" : [],
     "update_xml" : [],
     "active": False,
