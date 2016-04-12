@@ -142,6 +142,7 @@ class purchase_requisition_line(osv.osv):
                             all_done = False
 
                     # check if all purchase order are in status approved
+                    # and all lines are done
                     if all_done:
                         for order in req_line.requisition_id.purchase_order_line_ids:
                             if order.order_id.state != 'approved':
@@ -168,6 +169,11 @@ class purchase_order(osv.osv):
      
                         # Check if all po's from the purchase requisition are approved
                         all_done = True
+                        
+                        for reqline in poline.requisition_line_id.requisition_id.line_ids:
+                            if reqline.state == 'draft':
+                                all_done = False
+
                         for orderline in poline.requisition_line_id.requisition_id.purchase_order_line_ids:
                             if orderline.order_id.state != 'approved':
                                 all_done = False
