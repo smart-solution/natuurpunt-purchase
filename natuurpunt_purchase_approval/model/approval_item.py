@@ -229,7 +229,7 @@ class purchase_approval_item(osv.Model):
             if all(line.is_approved for line in pai.line_ids):
                 self.write(cr, SUPERUSER_ID, [pai.id], {'state': 'approved'}, context=context)
                 if pai.invoice_id:
-                    self.pool.get('account.invoice').write(cr, SUPERUSER_ID, [pai.invoice_id.id], {}, context=context)
+                    self.pool.get('account.invoice').write(cr, uid, [pai.invoice_id.id], {}, context=context)
         return True
 
 class purchase_approval_item_line(osv.Model):
