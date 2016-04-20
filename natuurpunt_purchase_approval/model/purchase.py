@@ -191,6 +191,8 @@ class purchase_order(osv.Model):
         super(purchase_order, self).action_cancel_draft(cr, uid, ids, context)
         for record in self.read(cr, uid, ids, ['order_line'], context):
             self.pool.get('purchase.order.line').write(cr, uid, record['order_line'], {'state': 'draft'}, context)
+        # When the order is cancelled => delete the approval lines
+        self.delete_all_approval_items(cr, uid, ids, context=context)
         return True
 
     def action_cancel(self, cr, uid, ids, context=None):

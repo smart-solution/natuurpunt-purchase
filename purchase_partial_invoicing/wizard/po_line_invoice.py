@@ -77,7 +77,7 @@ class purchase_line_invoice(orm.TransientModel):
                 journal_id = account_jrnl_obj.search(cr, uid, [('po_line_invoice_journal', '=', True)], context=None)
                 journal_id = journal_id and journal_id[0] or False
                 a = partner.property_account_payable.id
-                inv = { 
+                inv = {
                     'name': name,
                     'origin': name,
                     'type': 'in_invoice',
@@ -185,16 +185,16 @@ class account_invoice_line(orm.Model):
         """Get the delivery qty from the po line"""
         res = {}
         for line in self.browse(cr, uid, ids, context):
-            if line.purchase_order_line_ids: 
+            if line.purchase_order_line_ids:
                 res[line.id] = line.purchase_order_line_ids[0].delivery_quantity
             else:
                 res[line.id] = 0.0
 
-        return res 
+        return res
 
-    _columns = { 
+    _columns = {
         'po_delivery_qty': fields.function(_delivery_qty_get, method=True, string='Delivery Quantity', type="float", readonly=True, store=False),
-    }   
+    }
 
     def write(self, cr, uid, ids, vals, context=None):
         """Remove the invoiced flag on po line if the invoice line amount is modified"""
@@ -240,30 +240,30 @@ class account_invoice_line(orm.Model):
                     }
 
         return res
-    
+
     def onchange_quantity(self, cr, uid, ids, quantity, context=None):
         for line in self.browse(cr, uid, ids):
             if line.purchase_order_line_ids:
                 inv_qty = line.purchase_order_line_ids[0].invoiced_qty - line.quantity + quantity
                 if inv_qty > line.purchase_order_line_ids[0].product_qty:
-                    return {'value':{},'warning':{'title':'warning','message':'Invoiced Quantity (%s) is greater than the purchase order line quantity (%s)'%(inv_qty, line.purchase_order_line_ids[0].product_qty)}} 
-        return {'value':{}} 
+                    return {'value':{},'warning':{'title':'warning','message':'Invoiced Quantity (%s) is greater than the purchase order line quantity (%s)'%(inv_qty, line.purchase_order_line_ids[0].product_qty)}}
+        return {'value':{}}
 
 
 class purchase_order_line_delivery(orm.TransientModel):
 
     _inherit = "purchase.order.line.delivery"
 
-    _columns = { 
-        'delivery_quantity': fields.float('Delivered Quantity')
-    }   
+    _columns = {
+        'delivery_quantity': fields.float('Delivered Quantity',digits_compute=dp.get_precision('Product Unit of Measure'))
+    }
 
     def delivery_state_set(self, cr, uid, ids, context=None):
         for wiz in self.browse(cr, uid ,ids):
             self.pool.get('purchase.order.line').write(cr, uid, [context['active_id']], {'delivery_state':wiz.delivery_state,'delivery_quantity':wiz.delivery_quantity})
             po_line = self.pool.get('purchase.order.line').browse(cr, uid, context['active_id'])
             user = self.pool.get('res.users').browse(cr, uid, uid)
-            log_vals = { 
+            log_vals = {
                 'author_id': user.partner_id.id,
                 'type': 'notification',
                 'model': 'purchase.order',
@@ -296,9 +296,9 @@ class purchase_order_line(orm.Model):
 
     _inherit = "purchase.order.line"
 
-    _columns = { 
-        'delivery_quantity': fields.float('Delivered Quantity')
-    }   
+    _columns = {
+        'delivery_quantity': fields.float('Delivered Quantity',digits_compute=dp.get_precision('Product Unit of Measure')),
+    }
 
     def create(self, cr, uid, vals, context=None):
         # Change date and reset delivered qty at copy of po
@@ -335,7 +335,7 @@ class account_invoice(orm.Model):
 
     _inherit = "account.invoice"
 
-    _columns = { 
+    _columns = {
         'state': fields.selection([
             ('draft','Draft'),
             ('proforma','Pro-forma'),
@@ -355,7 +355,7 @@ class account_invoice(orm.Model):
             \n* The \'Paid\' status is set automatically when the invoice is paid. Its related journal entries may or may not be reconciled. \
             \n* The \'Cancelled\' status is used when user cancel invoice.'),
 
-    }   
+    }
 
     def invoice_unblock(self, cr, uid, ids, context=None):
         context['unblock'] = True
@@ -405,7 +405,7 @@ class account_invoice(orm.Model):
 
 
 class account_invoice_refund(orm.TransientModel):
-    
+
     _inherit = 'account.invoice.refund'
 
     def invoice_refund(self, cr, uid, ids, context=None):
@@ -417,11 +417,9 @@ class account_invoice_refund(orm.TransientModel):
 
             for line in invoice.invoice_line:
                 for po_line in line.purchase_order_line_ids:
-                    inv_line_obj.write(cr, 1, [po_line.id], {'purchase_order_line_ids':[(3,po_line.id,False)]}) 
+                    inv_line_obj.write(cr, 1, [po_line.id], {'purchase_order_line_ids':[(3,po_line.id,False)]})
 
             for po in invoice.purchase_order_ids:
-                inv_obj.write(cr, uid, [invoice.id], {'purchase_order_ids':[(3,po.id,False)]}) 
+                inv_obj.write(cr, uid, [invoice.id], {'purchase_order_ids':[(3,po.id,False)]})
 
         return res
-
-
