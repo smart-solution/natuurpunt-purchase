@@ -122,6 +122,7 @@ class purchase_requisition(osv.osv):
         self.generate_purchase_requisition_reminders(cr, uid, context=context)
         return True
 
+
 purchase_requisition()
 
 class purchase_requisition_line(osv.osv):
@@ -198,5 +199,18 @@ class purchase_order_line(osv.osv):
             vals['purchase_resp_id'] = req_line.requisition_id.user_id.id
         return super(purchase_order_line, self).create(cr, uid, vals=vals, context=context)
 
+    def redirect_to_purchase_order(self, cr, uid, ids, context=None):
+        for pol in self.browse(cr,uid,ids,context=context):
+            purchase_order_id = pol.order_id.id
+        return {
+                'name': _('Purchase Order'),
+                'view_type': 'form,tree',
+                'view_mode': 'form',
+                'res_model': 'purchase.order',
+                'target': 'current',
+                'context': context,
+                'res_id': purchase_order_id,
+                'type': 'ir.actions.act_window',    
+                }
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
