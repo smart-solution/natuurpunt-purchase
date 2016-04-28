@@ -56,7 +56,8 @@
                         <!--  <field name="invoiced_qty"/>-->
                         <field name="price_subtotal"/> 
                         <field name="date_planned" widget="date"/> 
-                        <field name="state"/>
+                        <!--<field name="state"/>-->
+                        <field name="po_line_state"/>
                       </tree>
                     </field>
                 </field>

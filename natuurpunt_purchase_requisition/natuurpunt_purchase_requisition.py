@@ -189,8 +189,22 @@ class purchase_order_line(osv.osv):
 
     _inherit = 'purchase.order.line'
 
+    def _get_po_line(self, cr, uid, ids, field_name, arg, context=None): 
+        res= {}
+        for poline in self.browse(cr, uid, ids):
+            if poline.state == 'approved':
+                res[poline.id] = 'Gereed'
+            elif poline.state == 'confirmed':
+                res[poline.id] = 'Fiatering'
+            elif poline.state == 'draft':
+                res[poline.id] = 'Concept'
+            elif poline.state == 'cancel':
+                res[poline.id] = 'Geannuleerd'
+        return res
+
     _columns = {
         'purchase_resp_id': fields.many2one('res.users', 'Resp req', required=True),
+        'po_line_state': fields.function(_get_po_line, string="Status", method=True, type="char", size=64),
     }
 
     def create(self, cr, uid, vals, context=None):
