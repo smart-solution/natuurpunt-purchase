@@ -122,6 +122,7 @@ class purchase_requisition(osv.osv):
         self.generate_purchase_requisition_reminders(cr, uid, context=context)
         return True
 
+
 purchase_requisition()
 
 class purchase_requisition_line(osv.osv):
@@ -188,8 +189,22 @@ class purchase_order_line(osv.osv):
 
     _inherit = 'purchase.order.line'
 
+    def _get_po_line(self, cr, uid, ids, field_name, arg, context=None): 
+        res= {}
+        for poline in self.browse(cr, uid, ids):
+            if poline.state == 'approved':
+                res[poline.id] = 'Gereed'
+            elif poline.state == 'confirmed':
+                res[poline.id] = 'Fiatering'
+            elif poline.state == 'draft':
+                res[poline.id] = 'Concept'
+            elif poline.state == 'cancel':
+                res[poline.id] = 'Geannuleerd'
+        return res
+
     _columns = {
         'purchase_resp_id': fields.many2one('res.users', 'Resp req', required=True),
+        'po_line_state': fields.function(_get_po_line, string="Status", method=True, type="char", size=64),
     }
 
     def create(self, cr, uid, vals, context=None):
@@ -198,5 +213,18 @@ class purchase_order_line(osv.osv):
             vals['purchase_resp_id'] = req_line.requisition_id.user_id.id
         return super(purchase_order_line, self).create(cr, uid, vals=vals, context=context)
 
+    def redirect_to_purchase_order(self, cr, uid, ids, context=None):
+        for pol in self.browse(cr,uid,ids,context=context):
+            purchase_order_id = pol.order_id.id
+        return {
+                'name': _('Purchase Order'),
+                'view_type': 'form,tree',
+                'view_mode': 'form',
+                'res_model': 'purchase.order',
+                'target': 'current',
+                'context': context,
+                'res_id': purchase_order_id,
+                'type': 'ir.actions.act_window',    
+                }
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

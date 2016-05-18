@@ -45,6 +45,7 @@
                 <field name="purchase_ids" position="replace">
                    <field name="purchase_order_line_ids" colspan="4" nolabel="1">
                       <tree string="Aankooporder lijnen">
+                        <button name="redirect_to_purchase_order" string="redirect_to_purchase_order" type="object" icon="gtk-zoom-100"/>
                         <field name="order_id"/>
                         <field name="name"/>
                         <field name="partner_id"/>
@@ -55,7 +56,8 @@
                         <!--  <field name="invoiced_qty"/>-->
                         <field name="price_subtotal"/> 
                         <field name="date_planned" widget="date"/> 
-                        <field name="state"/>
+                        <!--<field name="state"/>-->
+                        <field name="po_line_state"/>
                       </tree>
                     </field>
                 </field>
