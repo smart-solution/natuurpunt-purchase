@@ -147,6 +147,7 @@ class purchase_order_line(osv.osv):
                 result['analytic_dimension_1_id'] = line.analytic_dimension_1_id.id
                 result['analytic_dimension_2_id'] = line.analytic_dimension_2_id.id
                 result['analytic_dimension_3_id'] = line.analytic_dimension_3_id.id
+                result['purchase_resp_id'] = line.purchase_resp_id.id
         return result
 
     def unlink(self, cr, uid, ids, context=None):
