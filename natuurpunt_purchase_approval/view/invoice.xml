@@ -8,6 +8,12 @@
             <field name="inherit_id" ref="account.invoice_supplier_form" />
             <field name="arch" type="xml">
                 <data>
+
+                    <field name="check_total" position="after">
+                        <field name="refund_id" attrs="{'invisible':[('type','!=','in_invoice')]}"/>
+                        <field name="refunded_invoice_id" attrs="{'invisible':[('type','!=','in_refund')]}"/>
+                    </field>
+
                     <field name="state" position="attributes">
                         <attribute name="statusbar_visible">draft,open,confirmed,approved,paid</attribute>
                     </field>

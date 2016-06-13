@@ -35,7 +35,9 @@ class AccountInvoice(osv.Model):
         # new columns
         'approval_item_ids': fields.one2many('purchase.approval.item', 'invoice_id', readonly=True),
         'purchase_order_ids': fields.many2many('purchase.order', 'purchase_invoice_rel', 'invoice_id', 'purchase_id',
-            'Purchase Orders', readonly="True", help="Purchase Orders used to generate current Invoice."),
+        'Purchase Orders', readonly="True", help="Purchase Orders used to generate current Invoice."),
+        'refund_id': fields.many2one('account.invoice', 'Refund', domain="[('type','=','in_refund')]"),
+        'refunded_invoice_id': fields.many2one('account.invoice', 'Source Invoice', domain="[('type','=','in_invoice')]"),
     }
 
     def delete_all_approval_items(self, cr, uid, ids, context=None):
@@ -172,11 +174,14 @@ class AccountInvoice(osv.Model):
             self.create_all_approval_items(cr, uid, supplier_invoice_ids, context) # may auto approve some invoices
         supplier_refund_ids = [invoice.id for invoice in self.browse(cr, uid, ids, context=context) if invoice.type == 'in_refund']
         if supplier_refund_ids:
-            self.write(cr, uid, supplier_refund_ids, {'state': 'approved'}, context)
+            #self.write(cr, uid, supplier_refund_ids, {'state': 'approved'}, context)
+            self.write(cr, uid, supplier_refund_ids, {'state': 'confirmed'}, context)
+            self.create_all_approval_items(cr, uid, supplier_refund_ids, context) # may auto approve some invoices
         return True
 
     def invoice_approve(self, cr, uid, ids, context=None):
-        supplier_invoice_ids = [invoice.id for invoice in self.browse(cr, uid, ids, context=context) if invoice.type == 'in_invoice']
+        #supplier_invoice_ids = [invoice.id for invoice in self.browse(cr, uid, ids, context=context) if invoice.type == 'in_invoice']
+        supplier_invoice_ids = [invoice.id for invoice in self.browse(cr, uid, ids, context=context) if invoice.type in ('in_invoice','in_refund')]
         for invoice in self.browse(cr, uid, supplier_invoice_ids, context=context):
 
             # check that all approval items are fully approved, just in case admin patched a value manually
@@ -251,4 +256,22 @@ class AccountInvoiceLine(osv.Model):
 #            for line in self.browse(cr, uid, ids):
 #
 #        return super(purchase_order_line, self).write(cr, uid, ids, vals=vals, context=context)
+
+class account_invoice_refund(osv.osv_memory):
+
+    """Refunds invoice"""
+
+    _inherit = "account.invoice.refund"
+
+
+    def invoice_refund(self, cr, uid, ids, context=None):
+        res = super(account_invoice_refund, self).invoice_refund(cr, uid, ids, context=context)
+        print "REFUND RES:",res
+        print "CTX:",context
+        refund_id = res['domain'][1][2][0]
+        invoice_id = context['active_id']
+        self.pool.get('account.invoice').write(cr, uid, [invoice_id], {'refund_id':refund_id})
+        self.pool.get('account.invoice').write(cr, uid, [refund_id], {'refunded_invoice_id':invoice_id})
+        return res
+
 
