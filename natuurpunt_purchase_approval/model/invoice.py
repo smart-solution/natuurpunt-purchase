@@ -214,6 +214,8 @@ class AccountInvoice(osv.Model):
             default = {}
         default['approval_item_ids'] = []
         default['purchase_order_ids'] = []
+        default['refund_id'] = False
+        default['refunded_invoice_id'] = False
         return super(AccountInvoice, self).copy(cr, uid, oid, default, context)
 
     def write(self, cr, uid, ids, vals, context=None):
@@ -233,6 +235,13 @@ class AccountInvoice(osv.Model):
                     if approve:
                         context['skip_write'] = True
                         self.write(cr, uid, [invoice.id], {'state': 'approved'}, context=context)
+            if 'refund_id' in vals and vals['refund_id']:
+                context['skip_write'] = True
+                self.write(cr, uid, vals['refund_id'], {'refunded_invoice_id': invoice.id}, context=context)
+            if 'refunded_invoice_id' in vals and vals['refunded_invoice_id']:
+                context['skip_write'] = True
+                self.write(cr, uid, vals['refunded_invoice_id'], {'refund_id': invoice.id}, context=context)
+
         return super(AccountInvoice, self).write(cr, uid, ids, vals=vals, context=context)
 
 class AccountInvoiceLine(osv.Model):
