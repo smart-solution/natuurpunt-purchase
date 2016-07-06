@@ -114,6 +114,8 @@ class purchase_order_mail_compose_message(osv.TransientModel):
                     raise osv.except_osv(_("Warning"), _(message))
                 for recipient in self.pool.get('res.partner').browse(cr, uid, recipient_ids, context=context):
 
+                    values['body_html'] = values['body']
+
                     msg_id = mail_mail.create(cr, uid, values, context=context)
                     mail = mail_mail.browse(cr, uid, msg_id, context=context)
 
