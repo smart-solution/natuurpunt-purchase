@@ -220,6 +220,13 @@ class purchase_approval_item(osv.Model):
 
     def approve_item_level(self, cr, uid, ids, context=None):
         for pai in self.browse(cr, uid, ids, context=context):
+            
+            # In case of a refund, check if the invoice is approved
+            if pai.invoice_id.refunded_invoice_id and pai.invoice_id.refunded_invoice_id.state not in ('approved','paid'):
+                error_functional_scope = _('Cannot approve')
+                detailed_msg = _("""Source Invoice %s (id %s) is not fully approved.""" % (pai.invoice_id.refunded_invoice_id.name, pai.invoice_id.refunded_invoice_id.id))
+                raise osv.except_osv(error_functional_scope, detailed_msg)
+
             values = {
                 'is_approved': True,
                 'approval_timestamp': datetime.datetime.now().strftime(DEFAULT_SERVER_DATETIME_FORMAT),
