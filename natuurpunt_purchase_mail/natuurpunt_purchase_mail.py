@@ -88,11 +88,14 @@ class purchase_order_mail_compose_message(osv.TransientModel):
 
         for user in self.pool.get('res.users').browse(cr, uid, [uid], context=context):
             res['email_from'] = user.email_work
+            ctx = dict(context)
+            ctx.update({'current_user_name':user.name})
+            ctx.update({'current_user_email':user.email_work})
 
         if default_template_id:
             for template in self.pool.get('email.template').browse(cr, uid, [default_template_id], context=context):
-                res['subject'] = self.render_template(cr, uid, template.subject, model, res_id, context=context)
-                res['body'] = self.render_template(cr, uid, template.body_html, model, res_id, context=context)
+                res['subject'] = self.render_template(cr, uid, template.subject, model, res_id, context=ctx)
+                res['body'] = self.render_template(cr, uid, template.body_html, model, res_id, context=ctx)
 
         return res
 
