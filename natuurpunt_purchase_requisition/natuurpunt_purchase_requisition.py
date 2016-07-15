@@ -65,6 +65,8 @@ class purchase_requisition(osv.osv):
 
     def send_purchase_requisition_reminders_email(self, cr, uid, user, msg_vals, context=None):
         """Send daily purchase requisition reminders via e-mail"""
+        if context is None:
+            context = {}
         email_address = user.email_work
         if email_address:
             try:
