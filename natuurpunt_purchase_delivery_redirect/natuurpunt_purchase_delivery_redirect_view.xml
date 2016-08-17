@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<openerp>
+   <data>
+        
+        <record id="np_view_purchase_delivery_redirect" model="ir.ui.view">
+            <field name="name">np.view.purchase.delivery.redirect</field>
+            <field name="model">purchase.order.line</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="natuurpunt_purchase_delivery.view_my_purchase_order_line_delivery_tree" />
+            <field name="arch" type="xml">
+                        <field name="order_id" position="after">
+                        <button name="redirect_to_my_purchase_order" string="redirect_to_my_purchase_order" type="object" icon="gtk-zoom-100"/>
+                        </field>
+            </field>
+        </record>        
+
+   </data>
+</openerp>
