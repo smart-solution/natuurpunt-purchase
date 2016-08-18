@@ -36,7 +36,7 @@
         	  name="My Purchase Requisition Lines"  
               parent="purchase.menu_procurement_management" 
               action="action_my_purchase_requisition_lines_tree" 
-              sequence="1" 
+              sequence="5" 
               groups="purchase.group_purchase_user"/>
  
     </data>
