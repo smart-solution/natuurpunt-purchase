@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+      <record id="view_my_purchase_requisition_lines_tree" model="ir.ui.view">
+          <field name="name">My Purchase Requisition Lines</field>
+          <field name="model">purchase.requisition.line</field>
+          <field name="priority">15</field>
+          <field name="arch" type="xml">
+            <tree string="My Purchase Requisition Lines">
+                    <field name="requisition_id" />
+                    <field name="product_id" on_change="onchange_product_id(product_id,product_uom_id)" domain="[('purchase_ok','=',True)]"/>
+                    <field name="product_category_id" />
+                    <field name="name" string="Description"/>
+                    <field name="analytic_dimension_1_id" width="10"/>
+                    <field name="analytic_dimension_2_id" width="10"/>
+                    <field name="analytic_dimension_3_id" width="10"/>
+                    <field name="purchase_responsible_id" />
+                    <field name="product_qty"/>
+                    <field name="product_price_unit"/>
+                    <field name="state"/>
+              </tree>
+          </field>
+      </record>
+         
+    <record id="action_my_purchase_requisition_lines_tree" model="ir.actions.act_window">
+           <field name="name">My Purchase Requisition Lines</field>
+           <field name="type">ir.actions.act_window</field>
+           <field name="res_model">purchase.requisition.line</field>
+           <field name="view_type">form</field>
+           <field name="view_mode">tree</field>
+           <field name="domain">[('purchase_responsible_id','=',uid),('state','not in',['cancel','done'])]</field>
+           <field name="view_id" ref="view_my_purchase_requisition_lines_tree"/>
+    </record>
+ 
+        <menuitem id="np_my_purchase_req_lines_menu"
+        	  name="My Purchase Requisition Lines"  
+              parent="purchase.menu_procurement_management" 
+              action="action_my_purchase_requisition_lines_tree" 
+              sequence="1" 
+              groups="purchase.group_purchase_user"/>
+ 
+    </data>
+</openerp>
