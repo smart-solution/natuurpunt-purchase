@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_account_period_purchase_approver,access.account.period.purchase.approver,account.model_account_period,natuurpunt_purchase_approval.group_purchase_approver,1,0,0,0

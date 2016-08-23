@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<openerp>
+   <data>
+        
+      <record id="np_my_approved_purchases_action" model="ir.actions.act_window">
+          <field name="name">My Approved Purchases</field>
+          <field name="type">ir.actions.act_window</field>
+          <field name="res_model">purchase.order</field>
+          <field name="domain">[('approved_by_me','=',True)]</field>
+          <field name="view_mode">tree,form</field>
+      </record>
+      
+      <menuitem name="My Approved Purchases"
+                id="np_my_approved_purchases"
+                parent="purchase.menu_procurement_management"
+                action="np_my_approved_purchases_action"
+                sequence="99"/>
+                  
+   </data>
+</openerp>
