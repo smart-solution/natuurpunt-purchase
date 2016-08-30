@@ -28,7 +28,9 @@
     "description": """ This module collects all small changes related to 
     purchase management modules
 """,
-    "depends" : ["multi_analytical_account",],
+    "depends" : ["natuurpunt_purchase_search",
+                 "natuurpunt_purchase_requisition",
+                 "multi_analytical_account"],
     "data" : [
         'natuurpunt_purchase_small_changes_view.xml',
         ],

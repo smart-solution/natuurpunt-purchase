@@ -4,17 +4,18 @@
                 
 	    <record model="ir.ui.view" id="view_purchase_requisition_np3_form">
 	        <field name="name">purchase.requisition.np3.form</field>
-	        <field name="inherit_id" ref="natuurpunt_purchase.view_purchase_requisition_noproduct_form"/>
+	        <field name="inherit_id" ref="multi_analytical_account.view_purchase_requisition_np2_form"/>
 	        <field name="model">purchase.requisition</field>
 	        <field name="arch" type="xml">
-	        	<xpath expr="//field[@name='line_ids']/tree//field[@name='name']" position="replace">
+	    	    <xpath expr="//field[@name='line_ids']/tree//field[@name='name']" position="replace">
 				    <field name="name" invisible="1"/>
 	            </xpath>
-	            <xpath expr="//field[@name='line_ids']/tree//field[@name='product_id']" position="after">
+	    	    <xpath expr="//field[@name='line_ids']/tree//field[@name='product_id']" position="after">
 				    <field name="name" required="1"/>
 	            </xpath>
 	        </field>
 	    </record>
-
     </data>
 </openerp>
+
+
