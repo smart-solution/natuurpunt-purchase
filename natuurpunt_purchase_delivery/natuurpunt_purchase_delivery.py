@@ -15,7 +15,7 @@ class purchase_order_line(orm.Model):
             context = {}
         if not args:
             return []
-        cr.execute('SELECT id FROM purchase_order_line where product_qty > delivery_quantity')
+        cr.execute('SELECT id FROM purchase_order_line where product_qty > delivery_quantity or delivery_quantity is null')
         res = cr.fetchall()
         if not res:
             return [('id', '=', '0')]
