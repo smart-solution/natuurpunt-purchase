@@ -9,7 +9,7 @@
             <field name="inherit_id" ref="natuurpunt_purchase_delivery.view_my_purchase_order_line_delivery_tree" />
             <field name="arch" type="xml">
                         <field name="order_id" position="after">
-                        <button name="redirect_to_my_purchase_order" string="redirect_to_my_purchase_order" type="object" icon="gtk-zoom-100"/>
+                        <button name="redirect_to_my_purchase_order" string="redirect_to_my_purchase_order" type="object" icon="gtk-zoom-100" invisible="context.get('show_redirect',True)"/>
                         </field>
             </field>
         </record>        
