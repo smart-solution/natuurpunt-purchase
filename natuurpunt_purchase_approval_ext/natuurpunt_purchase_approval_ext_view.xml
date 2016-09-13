@@ -74,5 +74,16 @@
             </field>
         </record>
 
+        <record model="ir.ui.view" id="view_payment_order_credit_note_tree_inherit">
+            <field name="name">view_payment_order_credit_note_tree_inherit</field>
+            <field name="model">account.move.line</field>
+            <field name="inherit_id" ref="multi_analytical_account.view_create_payment_order_lines_search_np" />
+            <field name="arch" type="xml">
+                <field name="date" position="replace">
+                    <field name="credit_note_id" readonly="1"/>
+                </field>
+            </field>
+        </record>
+
     </data>
 </openerp>
