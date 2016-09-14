@@ -1,0 +1,18 @@
+# Dutch translation for a Natuurpunt module
+# FIRST AUTHOR <mattias.vanopstal@natuurpunt.be>
+#
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2016-08-18 11:44+0000\n"
+"PO-Revision-Date: 20136-08-18 11:44+0000\n"
+"Last-Translator: Mattias Van Opstal <mattias.vanopstal@natuurpunt.be>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+
+#. module: natuurpunt_my_purchase_requisition_lines
+#: model:ir.ui.menu,name:natuurpunt_my_purchase_requisition_lines.np_my_purchase_req_lines_menu
+#: model:ir.actions.act_window,name:natuurpunt_my_purchase_requisition_lines.action_my_purchase_requisition_lines_tree
+msgid "My Purchase Requisition Lines"
+msgstr "Mijn Inkoopaanvraaglijnen"

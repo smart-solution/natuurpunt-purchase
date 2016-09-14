@@ -158,5 +158,34 @@ class account_invoice_line(osv.osv):
     }
 
 
+class account_move_line(osv.osv):
+
+    _inherit = 'account.move.line'
+
+    _columns = {
+        'credit_note_id': fields.related('invoice','refund_id',type='many2one',relation='account.invoice',string='Creditnota'),
+    }
+
+
+class payment_order_create(osv.osv_memory):
+
+    _inherit = 'payment.order.create'
+
+    def create_payment(self, cr, uid, ids, context=None):
+
+        line_obj = self.pool.get('account.move.line')
+        if context is None:
+            context = {}
+        data = self.browse(cr, uid, ids, context=context)[0]
+        line_ids = [entry.id for entry in data.entries]
+        if not line_ids:
+            return {'type': 'ir.actions.act_window_close'}
+
+        for line in line_obj.browse(cr, uid, line_ids, context=context):
+	    if line.credit_note_id:
+                raise osv.except_osv(_('Error!'),_("You cannot add an invoice (%s) to a payment order if that invoice has a credit note (%s)."%(line.invoice.number,line.credit_note_id.number)))
+
+	return super(payment_order_create, self).create_payment(cr, uid, ids, context=context)
+
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
