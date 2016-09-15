@@ -4,7 +4,7 @@
       <record id="view_my_purchase_requisition_lines_tree" model="ir.ui.view">
           <field name="name">My Purchase Requisition Lines</field>
           <field name="model">purchase.requisition.line</field>
-          <field name="priority">15</field>
+          <field name="priority">200</field>
           <field name="arch" type="xml">
             <tree string="My Purchase Requisition Lines">
                     <field name="requisition_id" />
@@ -27,8 +27,8 @@
            <field name="type">ir.actions.act_window</field>
            <field name="res_model">purchase.requisition.line</field>
            <field name="view_type">form</field>
-           <field name="view_mode">tree</field>
-           <field name="domain">[('purchase_responsible_id','=',uid),('state','not in',['cancel','done'])]</field>
+           <field name="view_mode">tree,form</field>
+           <field name="domain">[('purchase_requisition_by_me','=',True),('state','not in',['cancel','done'])]</field>
            <field name="view_id" ref="view_my_purchase_requisition_lines_tree"/>
     </record>
  
