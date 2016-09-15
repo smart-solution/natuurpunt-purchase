@@ -183,7 +183,7 @@ class payment_order_create(osv.osv_memory):
 
         for line in line_obj.browse(cr, uid, line_ids, context=context):
 	    if line.credit_note_id:
-                raise osv.except_osv(_('Error!'),_("You cannot add an invoice (%s) to a payment order if that invoice has a credit note (%s)."%(line.invoice.number,line.credit_note_id.number)))
+                raise osv.except_osv(_('Error!'),_("Je kan in de betalingsopdracht geen factuur (%s) selecteren als er een corresponderende creditnota (%s) is."%(line.invoice.number,line.credit_note_id.number)))
 
 	return super(payment_order_create, self).create_payment(cr, uid, ids, context=context)
 
