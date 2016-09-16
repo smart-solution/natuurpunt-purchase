@@ -28,7 +28,7 @@
            <field name="res_model">purchase.requisition.line</field>
            <field name="view_type">form</field>
            <field name="view_mode">tree,form</field>
-           <field name="domain">[('purchase_requisition_by_me','=',True),('state','not in',['cancel','done'])]</field>
+           <field name="domain">[('purchase_requisition_by_me','=',True)]</field>
            <field name="view_id" ref="view_my_purchase_requisition_lines_tree"/>
     </record>
  
