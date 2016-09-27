@@ -35,7 +35,8 @@
         <menuitem id="np_my_purchase_req_lines_menu"
         	  name="My Purchase Requisition Lines"  
               parent="purchase.menu_procurement_management" 
-              action="action_my_purchase_requisition_lines_tree" 
+              action="action_my_purchase_requisition_lines_tree"
+              groups="base.group_user" 
               sequence="5"/>
  
     </data>
