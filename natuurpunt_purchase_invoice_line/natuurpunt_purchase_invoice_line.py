@@ -34,7 +34,6 @@ from openerp.tools.translate import _
 class purchase_order_line_add_to_invoice(osv.osv_memory):
 
     _name = "purchase.order.line.add_to_invoice"
-    _description = "Wizard to generate invoice lines from purchase order lines for existing invoices"
 
     _columns = {
         'invoice_id': fields.many2one('account.invoice','Factuur', required=True, domain=[('type','=','in_invoice'),('state','in',['draft'])])
