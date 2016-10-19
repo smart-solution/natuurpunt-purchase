@@ -48,13 +48,15 @@ class purchase_order_line_add_to_invoice(osv.osv_memory):
 
         PurchaseOrder = self.pool.get('purchase.order')
         PurchaseOrderLine = self.pool.get('purchase.order.line')
+        Invoice = self.pool.get('account.invoice')
         InvoiceLine = self.pool.get('account.invoice.line')
 
 	wizard = self.browse(cr, uid, ids[0], context=context) 
+	inv = Invoice.browse(cr, uid, wizard.invoice_id.id)
+	origin = inv.origin
 
         record_ids = context.get('active_ids', [])
         if record_ids:
-
             for line in PurchaseOrderLine.browse(cr, uid, record_ids, context=context):
                 # Do not generate invoice lines for 'confirmed' po lines, only 'approved' should match
                 if (not line.invoiced) and (line.state not in ('draft', 'confirmed', 'cancel')):
@@ -63,6 +65,10 @@ class purchase_order_line_add_to_invoice(osv.osv_memory):
                     invoice_line_data.update({'origin': line.order_id.name, 'invoice_id':wizard.invoice_id.id})
                     invoice_line_id = InvoiceLine.create(cr, uid, invoice_line_data, context=context)
                     PurchaseOrderLine.write(cr, uid, [line.id], {'invoiced': True, 'invoice_lines': [(4, invoice_line_id)]})
+		    # Add the PO reference in Brondocument
+		    if line.order_id.name not in origin:
+		    	origin = origin + ' ' + line.order_id.name
+		    Invoice.write(cr, uid, [wizard.invoice_id.id], {'origin': origin})
 
         return {
             'domain': "[('id','in', [%s])]"%(wizard.invoice_id.id),
@@ -99,9 +105,4 @@ class account_invoice(osv.osv):
 	return super(account_invoice, self).unlink(cr, uid, id, context=None)
 
 
-
-
-
-
-
-
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

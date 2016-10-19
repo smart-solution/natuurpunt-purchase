@@ -13,7 +13,7 @@
                         <field name="invoice_id"/>
                     </group>
                     <footer>
-                        <button name="add_to_invoice" string="Voe toe aan factuur" type="object" class="oe_highlight"/>
+                        <button name="add_to_invoice" string="Voeg toe aan factuur" type="object" class="oe_highlight"/>
                         or
                         <button string="Cancel" class="oe_link" special="cancel" />
                     </footer>
