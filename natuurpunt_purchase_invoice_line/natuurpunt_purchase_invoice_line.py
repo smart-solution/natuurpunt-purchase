@@ -37,7 +37,7 @@ class purchase_order_line_add_to_invoice(osv.osv_memory):
     _description = "Wizard to generate invoice lines from purchase order lines for existing invoices"
 
     _columns = {
-        'invoice_id': fields.many2one('account.invoice','Factuur', required=True, domain=[('type','=','in_invoice'),('state','in',['draft','open'])])
+        'invoice_id': fields.many2one('account.invoice','Factuur', required=True, domain=[('type','=','in_invoice'),('state','in',['draft'])])
     }
 
 
@@ -60,7 +60,6 @@ class purchase_order_line_add_to_invoice(osv.osv_memory):
                 if (not line.invoiced) and (line.state not in ('draft', 'confirmed', 'cancel')):
                     acc_id = PurchaseOrder._choose_account_from_po_line(cr, uid, line, context=context)
                     invoice_line_data = PurchaseOrder._prepare_inv_line(cr, uid, acc_id, line, context=context)
-		    print "Invoice Line Data:",invoice_line_data
                     invoice_line_data.update({'origin': line.order_id.name, 'invoice_id':wizard.invoice_id.id})
                     invoice_line_id = InvoiceLine.create(cr, uid, invoice_line_data, context=context)
                     PurchaseOrderLine.write(cr, uid, [line.id], {'invoiced': True, 'invoice_lines': [(4, invoice_line_id)]})
