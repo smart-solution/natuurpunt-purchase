@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+
+        <!-- Add po lines to invoices from op aankooplijnene -->
+<!--
+        <record id="view_purchase_order_line_add_to_invoice_wizard" model="ir.ui.view">
+            <field name="name">Voeg toe aan factuur</field>
+            <field name="model">purchase.order.line.add_to_invoice</field>
+            <field name="arch" type="xml">
+                <form string="Voeg toe aan factuur" version="7.0">
+                    <group>
+                        <field name="invoice_id"/>
+                    </group>
+                    <footer>
+                        <button name="add_to_invoice" string="Voeg toe aan factuur" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_purchase_order_line_add_to_invoice" model="ir.actions.act_window">
+               <field name="name">Voeg toe aan factuur</field>
+               <field name="type">ir.actions.act_window</field>
+               <field name="res_model">purchase.order.line.add_to_invoice</field>
+               <field name="view_type">form</field>
+               <field name="view_mode">form</field>
+               <field name="view_id" ref="view_purchase_order_line_add_to_invoice_wizard"/>
+        </record>
+                
+        <act_window name="Voeg toe aan factuur"
+            res_model="purchase.order.line.add_to_invoice"
+            src_model="purchase.order.line"
+            view_mode="form"
+            target="new"
+            multi="True"
+            key2="client_action_multi"
+            id="action_purchase_order_line_add_to_invoice"/>
+-->
+
+
+        <!-- Add po lines to invoices from invoice -->
+
+        <record id="view_invoice_purchase_order_line_add_to_invoice_wizard" model="ir.ui.view">
+            <field name="name">Voeg toe aan factuur</field>
+            <field name="model">invoice.purchase.order.line.add_to_invoice</field>
+            <field name="arch" type="xml">
+                <form string="Voeg toe aan factuur" version="7.0">
+                    <group>
+			<field name="partner_id" invisible="1"/>
+                        <field name="purchase_order_line_ids" context="{'search_default_partner_id':partner_id}" />
+                    </group>
+                    <footer>
+                        <button name="add_to_invoice" string="Voeg toe aan factuur" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_invoice_purchase_order_line_add_to_invoice" model="ir.actions.act_window">
+               <field name="name">Voeg toe aan factuur</field>
+               <field name="type">ir.actions.act_window</field>
+               <field name="res_model">invoice.purchase.order.line.add_to_invoice</field>
+               <field name="view_type">form</field>
+               <field name="view_mode">form</field>
+               <field name="view_id" ref="view_invoice_purchase_order_line_add_to_invoice_wizard"/>
+        </record>
+
+        <act_window name="Voeg toe aan factuur"
+            res_model="invoice.purchase.order.line.add_to_invoice"
+            src_model="account.invoice"
+            view_mode="form"
+            target="new"
+            id="action_invoice_purchase_order_line_add_to_invoice"/>
+
+
+
+    </data>
+</openerp>
+
+

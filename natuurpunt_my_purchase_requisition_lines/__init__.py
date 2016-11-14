@@ -4,4 +4,4 @@
 #
 ##############################################################################
 
-#import natuurpunt_my_purchase_requisition_lines
+import natuurpunt_my_purchase_requisition_lines

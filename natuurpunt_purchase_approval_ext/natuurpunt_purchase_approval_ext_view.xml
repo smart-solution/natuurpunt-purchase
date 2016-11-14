@@ -73,15 +73,82 @@
                 </field>
             </field>
         </record>
-
-        <record model="ir.ui.view" id="view_payment_order_credit_note_tree_inherit">
-            <field name="name">view_payment_order_credit_note_tree_inherit</field>
+<!--
+        <record model="ir.ui.view" id="account_payment.view_create_payment_order_lines">
+            <field name="name">view_payment_order_create_payment_credit_note</field>
+            <field name="model">payment.order.create</field>
+            <field name="arch" type="xml">
+		<form string="Search Payment lines" version="7.0">
+                    <group string="Entries">
+                        <field name="entries">
+				<tree string="Journal Items">
+					<field name="journal_id"/>
+					<field name="move_id"/>
+					<field name="period_id"/>
+					<field name="credit_note_id"/>
+					<field name="date_maturity"/>
+					<field name="name"/>
+					<field name="ref"/>
+					<field name="partner_id"/>
+					<field name="debit"/>
+					<field name="credit"/>
+                    		</tree>
+			</field>
+                    </group>
+                    <footer>
+                        <button name="create_payment" string="_Add to payment order" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+-->
+<!--
+        <record model="ir.ui.view" id="view_payment_order_payment_order_cn_tree_inherit">
+            <field name="name">view_payment_order_payment_order_cn_tree_inherit</field>
             <field name="model">account.move.line</field>
             <field name="inherit_id" ref="multi_analytical_account.view_create_payment_order_lines_search_np" />
             <field name="arch" type="xml">
-                <field name="date" position="replace">
-                    <field name="credit_note_id" readonly="1"/>
-                </field>
+		<field name="move_id" position="after">
+			<field name="credit_note_id"/>
+		</field>
+            </field>
+        </record>
+-->
+
+        <record model="ir.ui.view" id="view_payment_order_payment_order_cn_tree_inherit2">
+            <field name="name">view_payment_order_payment_order_cn_tree_inherit2</field>
+            <field name="model">account.move.line</field>
+            <field name="inherit_id" ref="account.view_move_line_tree" />
+            <field name="arch" type="xml">
+		<field name="move_id" position="after">
+			<field name="credit_note_id"/>
+		</field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_payment_order_credit_note_tree_inherit">
+            <field name="name">view_payment_order_credit_note_tree_inherit</field>
+            <field name="model">payment.order.create</field>
+            <field name="inherit_id" ref="multi_analytical_account.view_create_payment_order_lines_np" />
+            <field name="arch" type="xml">
+		<field name="entries" position="replace">
+		    <field name="entries">
+			<tree>
+				<field name="journal_id"/>
+				<field name="move_id"/>
+				<field name="period_id"/>
+				<field name="credit_note_id"/>
+				<field name="date_maturity"/>
+				<field name="name"/>
+				<field name="ref"/>
+				<field name="partner_id"/>
+				<field name="debit"/>
+				<field name="credit"/>
+			</tree>
+		    </field>
+		</field>
             </field>
         </record>
 
