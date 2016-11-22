@@ -358,7 +358,6 @@ class account_invoice(orm.Model):
     }
 
     def invoice_unblock(self, cr, uid, ids, context=None):
-        context['unblock'] = True
         context['skip_write'] = True
         self.write(cr, uid, ids, {'state':'approved'}, context=context)
         return True
@@ -374,7 +373,7 @@ class account_invoice(orm.Model):
         for invoice in self.browse(cr, uid, ids):
             invoice_state = invoice.state
             blocked = False
-            if invoice.state == 'approved' and 'unblock' not in context:
+            if invoice.state == 'approved':
                 # Check if invoice should be blocked
                 for line in invoice.invoice_line:
                     if line.purchase_order_line_ids and line.po_delivery_qty < line.purchase_order_line_ids[0].invoiced_qty:
