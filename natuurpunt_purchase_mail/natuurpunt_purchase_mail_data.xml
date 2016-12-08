@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <record id="sequence_memory_ir_attachment_type" model="ir.sequence.type">
+            <field name="name">Memory ir_attachment</field>
+            <field name="code">memory.ir.attachment</field>
+        </record>
+        
+        <record id="sequence_natuurpunt_mail_attachment" model="ir.sequence">
+            <field name="name">Memory ir_attachment</field>
+            <field name="code">memory.ir.attachment</field>
+            <field name="prefix">ATT/%(year)s</field>
+            <field name="padding">5</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+    </data>
+</openerp>
