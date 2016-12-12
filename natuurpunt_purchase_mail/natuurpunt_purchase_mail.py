@@ -84,7 +84,6 @@ class purchase_order_mail_compose_message(osv.TransientModel):
 
     _columns = {
         'supplier_id': fields.many2one('res.partner', string='email to supplier', required=True, ),
-        'cc': fields.many2many('res.partner','res_partner_mail_wizard_rel','wizard_id', 'partner_id', 'Additional contacts'),
         'report_name': fields.char('report', help="purchase order report attachment"),
         'report_size': fields.char('file size', help="purchase order report attachment"),
         'report_data': fields.binary('binary report data'),
@@ -135,56 +134,54 @@ class purchase_order_mail_compose_message(osv.TransientModel):
             recipient_ids.append(values['supplier_id'].id)
             values.pop('supplier_id')
 
-            for cc in wizard.cc:
-                recipient_ids.append(cc.id)
+            for partner in wizard.partner_ids:
+                recipient_ids.append(partner.id)
 
             if recipient_ids:
                 warning = self.check_partners_email(cr, uid, recipient_ids, context=context)
                 if warning:
                     message = warning['warning']['message']
                     raise osv.except_osv(_("Warning"), _(message))
+                values['body_html'] = values['body']
+                msg_id = mail_mail.create(cr, uid, values, context=context)
+                mail = mail_mail.browse(cr, uid, msg_id, context=context)
+
+                # convert report to attachment
+                attachment_ids = []
+                attachment_data = {
+                    'name': wizard['report_name'],
+                    'datas_fname': wizard['report_name'],
+                    'db_datas': wizard['report_data'],
+                    'res_model': 'mail.message',
+                    'res_id': mail.mail_message_id.id,
+                    'partner_id': recipient_ids[0],
+                }
+                context.pop('default_type', None)
+                ctx = dict(context)
+                ctx.update({'bypass_cmis':True})
+                attachment_ids.append(ir_attachment.create(cr, uid, attachment_data, context=ctx))
+
+                # get the external memory attachments 
+                if wizard['store_id']:
+                    ext_att_ids = self.pool.get('memory.ir.attachment').search(cr, uid, [('store_id', '=', wizard['store_id'])])
+                    for ext_att in self.pool.get('memory.ir.attachment').browse(cr, uid, ext_att_ids, context=context):
+                        attachment_data = {
+                            'name': ext_att.filename,
+                            'datas_fname': ext_att.filename,
+                            'db_datas': ext_att.data,
+                            'res_model': 'mail.message',
+                            'res_id': mail.mail_message_id.id,
+                            'partner_id': recipient_ids[0],
+                        }
+                        attachment_ids.append(ir_attachment.create(cr, uid, attachment_data, context=ctx))
+
+                if attachment_ids:
+                    values['attachment_ids'] = [(6, 0, attachment_ids)]
+                mail_mail.write(cr, uid, msg_id, {'attachment_ids': [(6, 0, attachment_ids)]}, context=context)
+
+                #send mail
+                mail_mail.send(cr, uid, [msg_id], recipient_ids=recipient_ids, context=context)
                 for recipient in self.pool.get('res.partner').browse(cr, uid, recipient_ids, context=context):
-
-                    values['body_html'] = values['body']
-
-                    msg_id = mail_mail.create(cr, uid, values, context=context)
-                    mail = mail_mail.browse(cr, uid, msg_id, context=context)
-
-                    # convert report to attachment
-                    attachment_ids = []
-                    attachment_data = {
-                        'name': wizard['report_name'],
-                        'datas_fname': wizard['report_name'],
-                        'db_datas': wizard['report_data'],
-                        'res_model': 'mail.message',
-                        'res_id': mail.mail_message_id.id,
-                        'partner_id': recipient_ids[0],
-                    }
-                    context.pop('default_type', None)
-                    ctx = dict(context)
-                    ctx.update({'bypass_cmis':True})
-                    attachment_ids.append(ir_attachment.create(cr, uid, attachment_data, context=ctx))
-
-                    # get the external memory attachments 
-                    if wizard['store_id']:
-                        ext_att_ids = self.pool.get('memory.ir.attachment').search(cr, uid, [('store_id', '=', wizard['store_id'])])
-                        for ext_att in self.pool.get('memory.ir.attachment').browse(cr, uid, ext_att_ids, context=context):
-                            attachment_data = {
-                                'name': ext_att.filename,
-                                'datas_fname': ext_att.filename,
-                                'db_datas': ext_att.data,
-                                'res_model': 'mail.message',
-                                'res_id': mail.mail_message_id.id,
-                                'partner_id': recipient_ids[0],
-                            }
-                            attachment_ids.append(ir_attachment.create(cr, uid, attachment_data, context=ctx))
-
-                    if attachment_ids:
-                        values['attachment_ids'] = [(6, 0, attachment_ids)]
-                    mail_mail.write(cr, uid, msg_id, {'attachment_ids': [(6, 0, attachment_ids)]}, context=context)
-
-                    #send mail
-                    mail_mail.send(cr, uid, [msg_id], recipient_ids=recipient_ids, context=context)
                     _logger.info('purchase.order mail %s: %s', values['subject'], recipient.email)
 
         return {'type': 'ir.actions.act_window_close'}
