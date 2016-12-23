@@ -180,33 +180,13 @@ class AccountInvoice(osv.Model):
         return True
 
     def invoice_approve(self, cr, uid, ids, context=None):
-        #supplier_invoice_ids = [invoice.id for invoice in self.browse(cr, uid, ids, context=context) if invoice.type == 'in_invoice']
-        supplier_invoice_ids = [invoice.id for invoice in self.browse(cr, uid, ids, context=context) if invoice.type in ('in_invoice','in_refund')]
-        for invoice in self.browse(cr, uid, supplier_invoice_ids, context=context):
-
-            # check that all approval items are fully approved, just in case admin patched a value manually
-            if any(pai.state != 'approved' for pai in invoice.approval_item_ids):
-                error_functional_scope = _('Cannot approve')
-                detailed_msg = _("""Invoice %s (id %s) still has at least one approval item waiting for approval.""" % (invoice.name, invoice.id))
-                raise osv.except_osv(error_functional_scope, detailed_msg)
-
-            # check that all amounts match all analytical accounts, just in case admin patched a value manually,
-            # but you need to sum it accross all invoices that could be linked to the PO invoiced here
-            aggregated_accounts = self._aggregate_analytical_accounts(cr, uid, invoice, context)
-            other_invoices_aggregated_accounts = self._aggregate_related_approved_invoices_analytical_accounts(cr, uid, invoice, context=context)
-            all_aggregated_accounts = other_invoices_aggregated_accounts # defaultdict(float)
-            for (account, amount) in aggregated_accounts.items():
-                all_aggregated_accounts[account] += amount
-            ResCurrency = self.pool.get('res.currency')
-            company_currency = invoice.company_id.currency_id
-            for pai in invoice.approval_item_ids:
-                all_invoices_amount = all_aggregated_accounts[pai.analytical_account_id.id]
-                if ResCurrency.compare_amounts(cr, uid, company_currency, all_invoices_amount, pai.amount) == 1:
-                    error_functional_scope = _('Cannot approve')
-                    detailed_msg = _("""Invoice %s (id %s) and its approval items do not match regarding the amounts charged on analytical accounts.""" % (invoice.name, invoice.id))
-                    #raise osv.except_osv(error_functional_scope, detailed_msg)
-
-        self.write(cr, uid, supplier_invoice_ids, {'state': 'approved'}, context)
+        for invoice in self.browse(cr, uid, ids):
+            assert invoice.state == 'confirmed', 'Invoice must be confirmed before it can be approved'
+            if not invoice.approval_item_ids:
+                continue
+            #approve invoice when all approval_items are approved
+            if not([app_item for app_item in invoice.approval_item_ids if app_item.state != 'approved']):
+                self.write(cr, uid, ids, {'state': 'approved'}, context=context)
         return True
 
     def copy(self, cr, uid, oid, default=None, context=None):
@@ -217,32 +197,6 @@ class AccountInvoice(osv.Model):
         default['refund_id'] = False
         default['refunded_invoice_id'] = False
         return super(AccountInvoice, self).copy(cr, uid, oid, default, context)
-
-    def write(self, cr, uid, ids, vals, context=None):
-        if type(ids) != type([]):
-            ids = [ids]
-        if context is None:
-            context = {}
-        if 'skip_write' not in context:
-            for invoice in self.browse(cr, uid, ids):
-                if invoice.state == 'confirmed':
-                    if not invoice.approval_item_ids:
-                        continue
-                    approve = True
-                    for app_item in invoice.approval_item_ids:
-                        if app_item.state != 'approved':
-                            approve = False
-                    if approve:
-                        context['skip_write'] = True
-                        self.write(cr, uid, [invoice.id], {'state': 'approved'}, context=context)
-            if 'refund_id' in vals and vals['refund_id']:
-                context['skip_write'] = True
-                self.write(cr, uid, vals['refund_id'], {'refunded_invoice_id': invoice.id}, context=context)
-            if 'refunded_invoice_id' in vals and vals['refunded_invoice_id']:
-                context['skip_write'] = True
-                self.write(cr, uid, vals['refunded_invoice_id'], {'refund_id': invoice.id}, context=context)
-
-        return super(AccountInvoice, self).write(cr, uid, ids, vals=vals, context=context)
 
 class AccountInvoiceLine(osv.Model):
     _name = 'account.invoice.line'
