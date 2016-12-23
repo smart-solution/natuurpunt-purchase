@@ -180,6 +180,7 @@ class AccountInvoice(osv.Model):
         return True
 
     def invoice_approve(self, cr, uid, ids, context=None):
+        approved = False
         for invoice in self.browse(cr, uid, ids):
             assert invoice.state == 'confirmed', 'Invoice must be confirmed before it can be approved'
             if not invoice.approval_item_ids:
@@ -187,7 +188,8 @@ class AccountInvoice(osv.Model):
             #approve invoice when all approval_items are approved
             if not([app_item for app_item in invoice.approval_item_ids if app_item.state != 'approved']):
                 self.write(cr, uid, ids, {'state': 'approved'}, context=context)
-        return True
+                approved = True
+        return approved
 
     def copy(self, cr, uid, oid, default=None, context=None):
         if default is None:
