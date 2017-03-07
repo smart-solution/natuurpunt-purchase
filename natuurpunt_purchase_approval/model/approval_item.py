@@ -3,7 +3,7 @@ import openerp.addons.decimal_precision as dp
 from openerp.tools.translate import _
 from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT
 from openerp import SUPERUSER_ID
-
+import logging
 import datetime
 
 # TODO: review ondelete attributes on all many2one
@@ -11,6 +11,8 @@ import datetime
 # TODO: check index regarding domains (search, record rule, action)
 # TODO: manage refusal + on hold
 # TODO: check places where _order is used implicitly (IMPORTANT: don't use it implicitly)
+
+_logger = logging.getLogger('natuurpunt_purchase_approval')
 
 class purchase_approval_item(osv.Model):
     _name = 'purchase.approval.item'
@@ -236,7 +238,15 @@ class purchase_approval_item(osv.Model):
             if all(line.is_approved for line in pai.line_ids):
                 self.write(cr, SUPERUSER_ID, [pai.id], {'state': 'approved'}, context=context)
                 if pai.invoice_id:
-                    self.pool.get('account.invoice').write(cr, uid, [pai.invoice_id.id], {}, context=context)
+                    res = self.pool.get('account.invoice').invoice_approve(cr, uid, [pai.invoice_id.id], context=context)
+                    _logger.info("pai {}/{} uid: {} invoice: {} approved: {}".format(
+                        pai.id,
+                        pai.line_id.id,
+                        uid,
+                        pai.invoice_id.internal_number,
+                        res)
+                    )
+
         return True
 
 class purchase_approval_item_line(osv.Model):

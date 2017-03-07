@@ -26,7 +26,8 @@
     Custom mail support for natuurpunt purchase 
 """,
     "depends" : ["natuurpunt_purchase",],
-    "data" : ["natuurpunt_purchase_mail_view.xml",],
+    "data" : ["natuurpunt_purchase_mail_view.xml",
+              "natuurpunt_purchase_mail_data.xml"],
     "init_xml" : [],
     "update_xml" : [],
     "active": False,
