@@ -182,7 +182,7 @@ class AccountInvoice(osv.Model):
     def invoice_approve(self, cr, uid, ids, context=None):
         approved = False
         for invoice in self.browse(cr, uid, ids):
-            assert invoice.state == 'confirmed', 'Invoice must be confirmed before it can be approved'
+            assert invoice.state in ('confirmed','paid'), 'Invoice must be confirmed or paid before it can be approved'
             if not invoice.approval_item_ids:
                 continue
             #approve invoice when all approval_items are approved
