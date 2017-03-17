@@ -318,13 +318,11 @@
     <para style="terp_default_9">
       <font color="white">.</font>
     </para>
+    <para style="terp_default_9">Uw referentie: [[o.partner_ref]]</para>
+    <para style="terp_default_9">
+      <font color="white">.</font>
+    </para>
     <para style="terp_default_9">[[ format(o.notes or '') ]]</para>
-    <para style="terp_default_9">
-      <font color="white">.</font>
-    </para>
-    <para style="terp_default_9">
-      <font color="white">.</font>
-    </para>
     <para style="terp_default_9">
       <font color="white">.</font>
     </para>
