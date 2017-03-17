@@ -90,7 +90,7 @@ class purchase_order(osv.Model):
 
     def delete_all_approval_items(self, cr, uid, ids, context=None):
         for po in self.browse(cr, uid, ids, context):
-            if po.state != 'draft':
+            if po.state != 'draft' and po.state != 'cancel':
                 error_functional_scope = _('Cannot delete approval items')
                 detailed_msg = _("""Purchase order %s (id %s) needs to be in 'draft' state for approval items to be deleted.""" % (po.name, po.id))
                 raise osv.except_osv(error_functional_scope, detailed_msg)
@@ -99,6 +99,12 @@ class purchase_order(osv.Model):
                 self.write(cr, SUPERUSER_ID, po.id, {'approval_item_ids': delete_one2many}, context)
         return True
 
+    def wkf_action_cancel(self, cr, uid, ids, context=None):
+        self.write(cr, uid, ids, {'state': 'cancel'}, context=context)
+        self.set_order_line_status(cr, uid, ids, 'cancel', context=context)
+        self.delete_all_approval_items(cr, uid, ids, context=context)
+            
+        
     def _aggregate_analytical_accounts(self, cr, uid, po, context=None):
         """Sums all po lines by analytical account, if subjected to approval.
         Amounts are the one found on the lines, thus they are coming from the pricelist:
