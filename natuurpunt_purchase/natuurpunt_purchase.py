@@ -44,7 +44,7 @@ class purchase_order(osv.osv):
         }
 
         _order = 'name desc'
-
+            
         def wkf_send_rfq(self, cr, uid, ids, context=None):
             '''
             This function opens a window to compose an email, with the edi purchase template message loaded by default
@@ -80,7 +80,7 @@ class purchase_order(osv.osv):
 
 
         def create(self, cr, uid, vals, context=None):
-            """Adds the partner to deliver"""
+            """Adds the partner to deliver"""            
             if 'warehouse_id' in vals and vals['warehouse_id']:
                 warehouse = self.pool.get('stock.warehouse').browse(cr, uid, vals['warehouse_id'])
                 if warehouse.partner_id:
@@ -229,8 +229,11 @@ class purchase_requisition(osv.osv):
         purchase_order_obj = self.pool.get('purchase.order')
         for purchase in self.browse(cr, uid, ids, context=context):
             for purchase_id in purchase.purchase_ids:
-                if str(purchase_id.state) in('draft'):
-                    purchase_order_obj.action_cancel(cr,uid,[purchase_id.id])
+                if purchase.state != 'draft' and purchase_id.state != 'cancel':
+                    raise osv.except_osv(_('Warning!'), _('First cancel the Purchase Orders for this Purchase requisition.'))
+                
+                #if str(purchase_id.state) in('draft'):
+                #    purchase_order_obj.action_cancel(cr,uid,[purchase_id.id])
             for line in purchase.line_ids:
                 if str(line.state) in ('draft'):
                     line.write({'state':'cancel'})
