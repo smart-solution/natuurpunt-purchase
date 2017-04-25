@@ -22,8 +22,26 @@ import logging
 from openerp import SUPERUSER_ID
 from openerp import netsvc
 from openerp.tools.translate import _
+import json
 
 _logger = logging.getLogger('natuurpunt_purchase_mail')
+
+class res_partner(osv.osv):
+    _inherit = 'res.partner'
+
+    def search_email(self, cr, uid, search_for, context=None):
+        if '@' in search_for or '.' in search_for:
+            domain = [('email','ilike',search_for)]
+        else:
+            domain = [('name','ilike',search_for)]
+        ids = self.search(cr,uid,domain,context=context,limit=5)
+        res = []
+        for partner in self.browse(cr, uid, ids, context=context):
+            name = '[' + str(partner.id) + '] ' + partner.name
+            if partner.email:
+                name += ' <' + partner.email + '>' 
+            res.append({'id':partner.id,'email':partner.email,'name':name})
+        return res
 
 class purchase_order_ir_attachment(osv.osv):
     _inherit = 'ir.attachment'
@@ -88,6 +106,7 @@ class purchase_order_mail_compose_message(osv.TransientModel):
         'report_size': fields.char('file size', help="purchase order report attachment"),
         'report_data': fields.binary('binary report data'),
         'store_id' : fields.char('store_id'),
+        'json_object' : fields.char('json_object', help="additional emails"),
     }
 
     def sizeof_fmt(self, num, suffix='B'):
@@ -134,8 +153,10 @@ class purchase_order_mail_compose_message(osv.TransientModel):
             recipient_ids.append(values['supplier_id'].id)
             values.pop('supplier_id')
 
-            for partner in wizard.partner_ids:
-                recipient_ids.append(partner.id)
+            json_string = wizard.json_object
+            email_cc = ''
+            for json_data in json.loads(json_string):
+                email_cc = email_cc + json_data['email'] + ','
 
             if recipient_ids:
                 warning = self.check_partners_email(cr, uid, recipient_ids, context=context)
@@ -143,6 +164,7 @@ class purchase_order_mail_compose_message(osv.TransientModel):
                     message = warning['warning']['message']
                     raise osv.except_osv(_("Warning"), _(message))
                 values['body_html'] = values['body']
+                values['email_cc'] = email_cc
                 msg_id = mail_mail.create(cr, uid, values, context=context)
                 mail = mail_mail.browse(cr, uid, msg_id, context=context)
 
