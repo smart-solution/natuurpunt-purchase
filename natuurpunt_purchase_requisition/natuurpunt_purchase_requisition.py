@@ -164,10 +164,17 @@ class purchase_order(osv.osv):
 
     def write(self, cr, uid, ids, vals, context=None):
         res = super(purchase_order, self).write(cr, uid, ids, vals, context=context)
-
         if 'state' in vals and vals['state'] == 'approved':
             for po in self.browse(cr, uid, ids):
                 for poline in po.order_line:
+                    # Check if the dimension is from the right dimension
+                    if poline.analytic_dimension_1_id and poline.analytic_dimension_1_id.dimension_id.name != 'Interne Dimensie':
+                        raise osv.except_osv(_('Error'),_('The analytic account for dimension 1 is not from the right dimension for the line %s'%(poline.name)))
+                    if poline.analytic_dimension_2_id and poline.analytic_dimension_2_id.dimension_id.name != 'Netwerk Dimensie':
+                        raise osv.except_osv(_('Error'),_('The analytic account for dimension 2 is not from the right dimension for the line %s'%(poline.name)))
+                    if poline.analytic_dimension_3_id and poline.analytic_dimension_3_id.dimension_id.name != 'Projecten, Contracten, Fondsen':
+                        raise osv.except_osv(_('Error'),_('The analytic account for dimension 3 is not from the right dimension for the line %s'%(poline.name)))
+                    
                     if poline.requisition_line_id:
      
                         # Check if all po's from the purchase requisition are approved
@@ -213,6 +220,21 @@ class purchase_order_line(osv.osv):
         if 'requisition_line_id' in vals and vals['requisition_line_id']:
             req_line = self.pool.get('purchase.requisition.line').browse(cr, uid, vals['requisition_line_id'])
             vals['purchase_resp_id'] = req_line.requisition_id.user_id.id
+        
+        # Check if the dimension is from the right dimension
+        if 'analytic_dimension_1_id' in vals:
+            analytic_account = self.pool.get('account.analytic.account').browse(cr, uid, vals['analytic_dimension_1_id'])
+            if vals['analytic_dimension_1_id'] is not False and analytic_account.dimension_id.name != 'Interne Dimensie':
+                raise osv.except_osv(_('Error'),_('The analytic account for dimension 1 is not from the right dimension for the line %s'%(vals['name'])))
+        if 'analytic_dimension_2_id' in vals:    
+            analytic_account = self.pool.get('account.analytic.account').browse(cr, uid, vals['analytic_dimension_2_id'])
+            if vals['analytic_dimension_2_id'] is not False and analytic_account.dimension_id.name != 'Netwerk Dimensie':
+                raise osv.except_osv(_('Error'),_('The analytic account for dimension 2 is not from the right dimension for the line %s'%(vals['name'])))
+        if 'analytic_dimension_3_id' in vals:    
+            analytic_account = self.pool.get('account.analytic.account').browse(cr, uid, vals['analytic_dimension_3_id'])
+            if vals['analytic_dimension_3_id'] is not False and analytic_account.dimension_id.name != 'Projecten, Contracten, Fondsen':
+                raise osv.except_osv(_('Error'),_('The analytic account for dimension 3 is not from the right dimension for the line %s'%(vals['name'])))
+    
         return super(purchase_order_line, self).create(cr, uid, vals=vals, context=context)
 
     def redirect_to_purchase_order(self, cr, uid, ids, context=None):

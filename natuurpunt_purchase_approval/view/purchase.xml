@@ -60,10 +60,12 @@
                                     </form>
                                 </field>
                             </group>
+                            <!--
                             <group colspan="1">
                                 <button name="delete_all_approval_items" string="Delete all approval items"
                                     states="draft" type="object" icon="gtk-delete" />
                             </group>
+                            -->
                         </group>
                     </page>
                 </xpath>

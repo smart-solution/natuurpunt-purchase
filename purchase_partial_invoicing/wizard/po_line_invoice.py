@@ -321,7 +321,8 @@ class purchase_order_line(orm.Model):
                 for inv_line in line.invoice_lines:
                     if inv_line.invoice_id.state == 'payment_blocked':
                         if line.delivery_quantity >= line.invoiced_qty:
-                            self.pool.get('account.invoice').invoice_unblock(cr, uid, [inv_line.invoice_id.id], context=context)
+                            # unblock invoice
+                            self.pool.get('account.invoice').write(cr, uid, [inv_line.invoice_id.id], {'state':'approved'}, context=context)
                             #break
 
         return res
@@ -358,6 +359,7 @@ class account_invoice(orm.Model):
     }
 
     def invoice_unblock(self, cr, uid, ids, context=None):
+        context['unblock'] = True
         context['skip_write'] = True
         self.write(cr, uid, ids, {'state':'approved'}, context=context)
         return True
@@ -373,7 +375,7 @@ class account_invoice(orm.Model):
         for invoice in self.browse(cr, uid, ids):
             invoice_state = invoice.state
             blocked = False
-            if invoice.state == 'approved':
+            if invoice.state == 'approved' and 'unblock' not in context:
                 # Check if invoice should be blocked
                 for line in invoice.invoice_line:
                     if line.purchase_order_line_ids and line.po_delivery_qty < line.purchase_order_line_ids[0].invoiced_qty:

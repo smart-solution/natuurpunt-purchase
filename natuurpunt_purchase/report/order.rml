@@ -180,6 +180,7 @@
     </para>
     <para style="terp_header"><b>[[ o.state=='draft' and removeParentNode('para') ]] Purchase Order N° [[ o.name ]]</b></para>
     <para style="terp_header"><b>[[ o.state&lt;&gt;'draft' and removeParentNode('para') ]] Request for Quotation N° [[ o.name ]]</b></para>
+	<para style="terp_default_8">Referentie leverancier: [[ o.partner_ref or '' ]]</para>
     <para style="terp_default_8">
         Contact person: [[ o.create_uid.name ]]
     </para>
