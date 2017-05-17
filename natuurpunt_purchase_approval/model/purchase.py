@@ -102,7 +102,7 @@ class purchase_order(osv.Model):
     def wkf_action_cancel(self, cr, uid, ids, context=None):
         self.write(cr, uid, ids, {'state': 'cancel'}, context=context)
         self.set_order_line_status(cr, uid, ids, 'cancel', context=context)
-        self.delete_all_approval_items(cr, uid, ids, context=context)
+        self.delete_all_approval_items(cr, uid, SUPERUSER_ID, context=context)
             
         
     def _aggregate_analytical_accounts(self, cr, uid, po, context=None):
