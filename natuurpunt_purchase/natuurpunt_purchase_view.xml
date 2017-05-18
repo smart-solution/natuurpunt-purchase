@@ -332,7 +332,7 @@
                <field name="res_model">purchase.order.line</field>
                <field name="view_type">form</field>
                <field name="view_mode">tree</field>
-               <field name="domain">[('po_state','not in',['draft','cancel','done'])]</field>
+               <field name="domain">[('po_state','not in',['draft','cancel','done','confirmed'])]</field>
                <field name="view_id" ref="view_purchase_order_line_delivery_tree"/>
                <field name="search_view_id" ref="view_purchase_order_line_delivery_filter"/>
         </record>
