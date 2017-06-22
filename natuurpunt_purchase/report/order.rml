@@ -180,15 +180,16 @@
     </para>
     <para style="terp_header"><b>[[ o.state=='draft' and removeParentNode('para') ]] Purchase Order N° [[ o.name ]]</b></para>
     <para style="terp_header"><b>[[ o.state&lt;&gt;'draft' and removeParentNode('para') ]] Request for Quotation N° [[ o.name ]]</b></para>
-	<para style="terp_default_8">Referentie leverancier: [[ o.partner_ref or '' ]]</para>
-    <para style="terp_default_8">
+	<para style="terp_default_9">Referentie leverancier: [[ o.partner_ref or '' ]]</para>
+    <para style="terp_default_9">
         Contact person: [[ o.create_uid.name ]]
     </para>
     <!--
-     <para style="terp_default_8">Our Order Reference: [[ o.name or '' ]]</para>
+     <para style="terp_default_9">Our Order Reference: [[ o.name or '' ]]</para>
 -->
     <para style="terp_default_9">Please pay attention to mandatory mentioning of our purchase order number on the invoice</para>
-     <para style="terp_default_8">Order Date: [[ formatLang(o.date_order,date=True) ]]</para>
+     <para style="terp_default_9">Facturen digtaal versturen kan naar : invoice@natuurpunt.be</para>
+     <para style="terp_default_9">Order Date: [[ formatLang(o.date_order,date=True) ]]</para>
           <!--
     <blockTable colWidths="136.0,132.0,133.0,133.0" style="Header_Order_Reference_Tbl">
       <tr>
