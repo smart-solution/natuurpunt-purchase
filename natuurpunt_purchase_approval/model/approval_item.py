@@ -23,7 +23,7 @@ class purchase_approval_item(osv.Model):
         ('waiting', 'Waiting Level Approval'),
         ('approved', 'Approved'),
     ]
-
+    
     def _get_next_line_to_approve(self, cr, uid, ids, field_name, arg, context=None):
         res = dict.fromkeys(ids)
         for pai in self.browse(cr, uid, ids, context=context):
@@ -135,6 +135,7 @@ class purchase_approval_item(osv.Model):
                 ),
             },
         ),
+        'backup_approver': fields.related('next_approver_id', 'approval_substitute_id', type='many2one', relation='res.users', string='Backup Approver',store=False),
     }
 
     _defaults = {
