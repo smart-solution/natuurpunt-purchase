@@ -188,6 +188,9 @@ class AccountInvoice(osv.Model):
             #approve invoice when all approval_items are approved
             if not([app_item for app_item in invoice.approval_item_ids if app_item.state != 'approved']):
                 self.write(cr, uid, ids, {'state': 'approved'}, context=context)
+                # invoice paid before approval, invoice back to paid
+                if self.test_paid(cr, uid, [invoice.id]):
+                    self.write(cr, uid, ids, {'state': 'paid'}, context=context)
                 approved = True
         return approved
 
