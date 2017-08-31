@@ -135,7 +135,7 @@ class purchase_approval_item(osv.Model):
                 ),
             },
         ),
-        'backup_approver': fields.related('next_approver_id', 'approval_substitute_id', type='many2one', relation='res.users', string='Backup Approver',store=False),
+        'backup_approver': fields.related('line_next_approver_id', 'approval_substitute_id', type='many2one', relation='res.users', string='Backup Approver',store=False),
     }
 
     _defaults = {
