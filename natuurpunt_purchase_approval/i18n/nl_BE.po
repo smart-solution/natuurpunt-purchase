@@ -80,6 +80,11 @@ msgid "Purchase Order Approval Reminder"
 msgstr "Herinnering: Inkoopaanvragen goedkeuren"
 
 #. module: natuurpunt_purchase_approval
+#: code:addons/natuurpunt_purchase_approval/model/approval_item.py:
+msgid "Source Invoice %s (id %s) has dimension user."
+msgstr "Factuur %s (id %s): Verantwoordelijke analytische toewijzing is ingevuld!"
+
+#. module: natuurpunt_purchase_approval
 #: model:email.template,body_html:natuurpunt_purchase_approval.
 msgid ""
 "\n"
