@@ -226,14 +226,14 @@ class purchase_approval_item(osv.Model):
 
             if pai.invoice_id.dimension_user_id:
                 error_functional_scope = _('Cannot approve')
-                detailed_msg = _("""Source Invoice %s (id %s) has dimension user.""" % (pai.invoice_id.name, pai.invoice_id.id))
-                raise osv.except_osv(error_functional_scope, detailed_msg)
+                detailed_msg = _('Source Invoice %s (id %s) has dimension user.')
+                raise osv.except_osv(error_functional_scope, detailed_msg % (pai.invoice_id.internal_number, pai.invoice_id.id))
 
             # In case of a refund, check if the invoice is approved
             if pai.invoice_id.refunded_invoice_id and pai.invoice_id.refunded_invoice_id.state not in ('approved','paid'):
                 error_functional_scope = _('Cannot approve')
-                detailed_msg = _("""Source Invoice %s (id %s) is not fully approved.""" % (pai.invoice_id.refunded_invoice_id.name, pai.invoice_id.refunded_invoice_id.id))
-                raise osv.except_osv(error_functional_scope, detailed_msg)
+                detailed_msg = _('Source Invoice %s (id %s) is not fully approved.')
+                raise osv.except_osv(error_functional_scope, detailed_msg % (pai.invoice_id.refunded_invoice_id.internal_number, pai.invoice_id.refunded_invoice_id.id))
 
             values = {
                 'is_approved': True,
