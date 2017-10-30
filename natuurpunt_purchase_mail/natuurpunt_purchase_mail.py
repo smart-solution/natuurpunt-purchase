@@ -228,7 +228,7 @@ class purchase_order_mail_compose_message(osv.TransientModel):
         res_id = context.get('default_res_id',False)
         model = context.get('default_model',False)
         ir_actions_report = self.pool.get('ir.actions.report.xml')
-        report_ids = ir_actions_report.search(cr, uid, [('report_name','=','purchase.order')])
+        report_ids = ir_actions_report.search(cr, uid, [('report_name','=','aankoop.order')])
         for report in ir_actions_report.browse(cr, uid, report_ids, context=ctx):
             report_service = 'report.' + report.report_name
             service = netsvc.LocalService(report_service)
