@@ -27,14 +27,14 @@ msgstr "Verwacht leveradres:"
 msgid "Purchase Order Confirmation N°"
 msgstr "Aankooporder"
 
-#. module: purchase
-#: report:purchase.quotation:0
+#. module: natuurpunt_purchase
+#: report:aankoop.order:0
 msgid "Contact person:"
 msgstr "Contactpersoon:"
 
 #. module: natuurpunt_purchase
 #: report:aankoop.order:0
-msgid "Order date:"
+msgid "Order Date:"
 msgstr "Aanvraagdatum:"
 
 #. module: natuurpunt_purchase
@@ -58,12 +58,12 @@ msgid "Unit Price"
 msgstr "Eenheidsprijs"
 
 #. module: purchase
-#: report:purchase.order:0
-msgid "Contact person:"
-msgstr "Contactpersoon:"
+#: report:aankoop.order:0
+msgid "Contact person"
+msgstr "Contactpersoon"
 
 #. module: natuurpunt_purchase
-#: report:purchase.order:0
+#: report:aankoop.order:0
 msgid "Discount %"
 msgstr "Korting %"
 
@@ -85,23 +85,11 @@ msgstr "BTW : "
 msgid "Our Order Reference:"
 msgstr "Onze order-referentie:"
 
-#. module: natuurpunt_purchase
-#: report:purchase.quotation:0
-#: report:purchase.order:0
-msgid "Order Date:"
-msgstr "Besteldatum:"
-
 #. module: purchase
 #: report:purchase.quotation:0
 #: report:purchase.order:0
 msgid "Our Order Reference:"
 msgstr "Onze order-referentie:"
-
-#. module: purchase
-#: report:purchase.quotation:0
-#: report:purchase.order:0
-msgid "Order Date:"
-msgstr "Besteldatum:"
 
 #. module: natuurpunt_purchase
 #: report:purchase.quotation:0
