@@ -26,7 +26,7 @@ from openerp import pooler
 from natuurpunt_tools import report
 
 class aankoop_order(report.natuurpunt_rml_parse):
-    _inherit = 'order'
+    #_inherit = 'order'
     def __init__(self, cr, uid, name, context):
         print "PARSER CALLED"
         super(aankoop_order, self).__init__(cr, uid, name, context=context)
