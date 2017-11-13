@@ -109,7 +109,7 @@ class purchase_order_lines_import_wizard(osv.TransientModel):
             
             responsible = False
             if row[6] != "":
-                responsible = self.pool.get('res.users').search(cr, uid, [('id','=',int(row[6]))]) 
+                responsible = self.pool.get('res.users').search(cr, uid, [('partner_id','=',int(row[6]))]) 
                 if responsible:
                     responsible = responsible[0]
                 else:
