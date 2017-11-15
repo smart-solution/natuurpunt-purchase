@@ -1,0 +1,83 @@
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+#	* purchase_order_lines_import
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenERP Server 7.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-11-13 08:54+0000\n"
+"PO-Revision-Date: 2017-11-13 08:54+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: purchase_order_lines_import
+#: field:purchase.order.lines.import.wizard,lines_file:0
+msgid "Entry Lines File"
+msgstr "File met aankooplijnen"
+
+#. module: purchase_order_lines_import
+#: model:ir.model,name:purchase_order_lines_import.model_purchase_order_line
+msgid "Purchase Order Line"
+msgstr "Aankooplijn"
+
+#. module: purchase_order_lines_import
+#: view:purchase.order.lines.import.wizard:0
+msgid "Import File"
+msgstr "Importeer file"
+
+#. module: purchase_order_lines_import
+#: code:addons/purchase_order_lines_import/purchase_order_lines_import.py:78
+#, python-format
+msgid "No product could be found for the line %s"
+msgstr "Er kan geen product gevonden worden voor lijn %s"
+
+#. module: purchase_order_lines_import
+#: code:addons/purchase_order_lines_import/purchase_order_lines_import.py:78
+#, python-format
+msgid "No procuct found !"
+msgstr "Geen procuct gevonden !"
+
+#. module: purchase_order_lines_import
+#: code:addons/purchase_order_lines_import/purchase_order_lines_import.py:116
+#, python-format
+msgid "No partner found !"
+msgstr "Geen partner gevonden !"
+
+
+
+#. module: purchase_order_lines_import
+#: code:addons/purchase_order_lines_import/purchase_order_lines_import.py:116
+#, python-format
+msgid "No user could be found for ID %s"
+msgstr "Geen gebruiker gevonden voor ID %s"
+
+#. module: purchase_order_lines_import
+#: model:ir.actions.act_window,name:purchase_order_lines_import.po_lines_import_wizard
+#: view:purchase.order:0
+#: view:purchase.order.lines.import.wizard:0
+msgid "Import Purchase Order Lines"
+msgstr "Importeer aankooplijnen"
+
+#. module: purchase_order_lines_import
+#: code:addons/purchase_order_lines_import/purchase_order_lines_import.py:89
+#: code:addons/purchase_order_lines_import/purchase_order_lines_import.py:95
+#: code:addons/purchase_order_lines_import/purchase_order_lines_import.py:101
+#, python-format
+msgid "No analytic account could be found for that code %s"
+msgstr ""
+
+#. module: purchase_order_lines_import
+#: view:purchase.order.lines.import.wizard:0
+msgid "Cancel"
+msgstr "Annuleer"
+
+#. module: purchase_order_lines_import
+#: model:ir.model,name:purchase_order_lines_import.model_purchase_order_lines_import_wizard
+msgid "purchase.order.lines.import.wizard"
+msgstr ""
+

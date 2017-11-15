@@ -114,7 +114,7 @@ class purchase_order(osv.osv):
                      'ids': ids, 
                      'form': self.read(cr, uid, ids[0], context=context),
             }
-            return {'type': 'ir.actions.report.xml', 'report_name': 'purchase.order', 'datas': datas, 'nodestroy': True}
+            return {'type': 'ir.actions.report.xml', 'report_name': 'aankoop.order', 'datas': datas, 'nodestroy': True}
 
 
 class purchase_order_line(osv.osv):

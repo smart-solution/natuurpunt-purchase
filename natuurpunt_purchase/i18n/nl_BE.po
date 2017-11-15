@@ -27,23 +27,43 @@ msgstr "Verwacht leveradres:"
 msgid "Purchase Order Confirmation N°"
 msgstr "Aankooporder"
 
-#. module: purchase
-#: report:purchase.quotation:0
-msgid "Contact person:"
-msgstr "Contactpersoon:"
-
-#. module: purchase
-#: report:purchase.quotation:0
-msgid "Order date:"
-msgstr "Aanvraagdatum:"
-
-#. module: purchase
-#: report:purchase.order:0
+#. module: natuurpunt_purchase
+#: report:aankoop.order:0
 msgid "Contact person:"
 msgstr "Contactpersoon:"
 
 #. module: natuurpunt_purchase
-#: report:purchase.order:0
+#: report:aankoop.order:0
+msgid "Order Date:"
+msgstr "Aanvraagdatum:"
+
+#. module: natuurpunt_purchase
+#: report:aankoop.order:0
+msgid "Description"
+msgstr "Omschrijving"
+
+#. module: natuurpunt_purchase
+#: report:aankoop.order:0
+msgid "Date Req."
+msgstr "Datum aanvr."
+
+#. module: natuurpunt_purchase
+#: report:aankoop.order:0
+msgid "Qty"
+msgstr "Hvh"
+
+#. module: natuurpunt_purchase
+#: report:aankoop.order:0
+msgid "Unit Price"
+msgstr "Eenheidsprijs"
+
+#. module: purchase
+#: report:aankoop.order:0
+msgid "Contact person"
+msgstr "Contactpersoon"
+
+#. module: natuurpunt_purchase
+#: report:aankoop.order:0
 msgid "Discount %"
 msgstr "Korting %"
 
@@ -65,32 +85,20 @@ msgstr "BTW : "
 msgid "Our Order Reference:"
 msgstr "Onze order-referentie:"
 
-#. module: natuurpunt_purchase
-#: report:purchase.quotation:0
-#: report:purchase.order:0
-msgid "Order Date:"
-msgstr "Besteldatum:"
-
 #. module: purchase
 #: report:purchase.quotation:0
 #: report:purchase.order:0
 msgid "Our Order Reference:"
 msgstr "Onze order-referentie:"
 
-#. module: purchase
+#. module: natuurpunt_purchase
 #: report:purchase.quotation:0
-#: report:purchase.order:0
-msgid "Order Date:"
-msgstr "Besteldatum:"
-
-#. module: purchase
-#: report:purchase.quotation:0
-#: report:purchase.order:0
+#: report:aankoop.order:0
 msgid "Please pay attention to mandatory mentioning of our purchase order number on the invoice"
 msgstr "Gelieve ons aankoopordernummer verplicht te vermelden op factuur"
 
-#. module: purchase
-#: report:purchase.order:0
+#. module: natuurpunt_purchase
+#: report:aankoop.order:0
 msgid "Shipping address :"
 msgstr "Leveradres:"
 
@@ -99,18 +107,23 @@ msgstr "Leveradres:"
 msgid "Net Total :"
 msgstr "Totaal excl BTW:"
 
-#. module: purchase
-#: report:purchase.order:0
+#. module: natuurpunt_purchase
+#: report:aankoop.order:0
 msgid "Purchase Order N°"
 msgstr "Aankooporder nr."
 
 #. module: natuurpunt_purchase
-#: report:purchase.order:0
+#: report:aankoop.order:0
+msgid "Net Price"
+msgstr "Nettoprijs"
+
+#. module: natuurpunt_purchase
+#: report:aankoop.order:0
 msgid "Total excl VAT:"
 msgstr "Totaal excl BTW:"
 
-#. module: purchase
-#: report:purchase.order:0
+#. module: natuurpunt_purchase
+#: report:aankoop.order:0
 msgid "Shipping address:"
 msgstr "Leveradres:"
 
@@ -164,7 +177,7 @@ msgid "Purchase Order Lines"
 msgstr "Aankooplijnen voor ontvangst"
 
 #. module: natuurpunt_purchase
-#: field:purchase.order.line,discount:0
+#: field:aankoop.order:0
 msgid "Discount (%)"
 msgstr "Korting (%)"
 
