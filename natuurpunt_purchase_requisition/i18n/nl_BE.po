@@ -31,6 +31,12 @@ msgstr "Inkoopaanvragen:"
 msgid "Purchase Requisition Reminder"
 msgstr "Herinnering: Inkoopaanvragen"
 
+#. module: purchase_requisition
+#: model:ir.actions.act_window,name:purchase_requisition.action_purchase_requisition
+#: model:ir.ui.menu,name:purchase_requisition.menu_purchase_requisition_pro_mgt
+msgid "Purchase Requisitions"
+msgstr "Inkoopaanvragen"
+
 #. module: natuurpunt_purchase_requisition
 #: model:email.template,body_html:natuurpunt_purchase_requisition.send_purchase_requisition_reminders_email
 msgid "\n

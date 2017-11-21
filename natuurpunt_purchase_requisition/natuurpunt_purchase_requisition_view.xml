@@ -26,7 +26,7 @@
         </record>
 
         <record id="purchase_requisition.action_purchase_requisition" model="ir.actions.act_window">
-             <field name="name">Purchase Requisitions test</field>
+             <field name="name">Purchase Requisitions</field>
              <field name="type">ir.actions.act_window</field>
              <field name="res_model">purchase.requisition</field>
              <field name="view_type">form</field>
@@ -35,7 +35,7 @@
              <field name="domain">[]</field>
              <field name="search_view_id" ref="np_view_purchase_requisition_filter"></field>
         </record>
-
+        
         <record model="ir.ui.view" id="view_np_purchase_quotations_requisition_form">
             <field name="name">view.np.purchase.quotations.requisition.form</field>
             <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_form"/>
