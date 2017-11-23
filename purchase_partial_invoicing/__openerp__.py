@@ -12,7 +12,7 @@ for each line, the quantity to invoice.
     'author': '',
     'website': '',
     'license': '',
-    "depends": ['natuurpunt_purchase_approval_ext'],
+    "depends": ['natuurpunt_purchase_approval_ext','natuurpunt_purchase'],
     "data": [
         'wizard/po_line_invoice_view.xml',
         'purchase_view.xml',
