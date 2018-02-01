@@ -27,10 +27,11 @@
     "category" : "Purchase Management",
     "description": """ This module collects all small changes related to 
     purchase management modules
+    - filter on membership/magazine products
 """,
     "depends" : ["natuurpunt_purchase_search",
                  "natuurpunt_purchase_requisition",
-                 "multi_analytical_account","product"],
+                 "product"],
     "data" : [
         'natuurpunt_purchase_small_changes_view.xml',
         ],
