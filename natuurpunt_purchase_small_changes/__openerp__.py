@@ -30,7 +30,7 @@
 """,
     "depends" : ["natuurpunt_purchase_search",
                  "natuurpunt_purchase_requisition",
-                 "multi_analytical_account"],
+                 "multi_analytical_account","product"],
     "data" : [
         'natuurpunt_purchase_small_changes_view.xml',
         ],
