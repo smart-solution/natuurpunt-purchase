@@ -63,7 +63,7 @@ class purchase_order_lines_import_wizard(osv.TransientModel):
         fp.write(base64.decodestring(obj.lines_file))
         fp.close()
         fp = open(fname,'rU')
-        reader = csv.reader(fp, delimiter=";", quoting=csv.QUOTE_NONE)
+        reader = csv.reader(fp, delimiter=";", quoting=csv.QUOTE_NONE) #development -> delimiter ","; else delimiter =";"
         entry_vals = []
 
         for row in reader:
@@ -73,7 +73,7 @@ class purchase_order_lines_import_wizard(osv.TransientModel):
             # Find product 
             product_id = False
             if row[0] != "":
-                product_id = self.pool.get('product.product').search(cr, uid, [('id','=',row[0])]) #TODO: unique op default code?
+                product_id = self.pool.get('product.product').search(cr, uid, [('id','=',row[0])])
                 if not product_id:
                     raise osv.except_osv(_('No procuct found !'), _('No product could be found for the line %s'%(str(reader.line_num))))
                 product_id = row[0]
@@ -86,19 +86,19 @@ class purchase_order_lines_import_wizard(osv.TransientModel):
             if row[2] != "":
                 dimension1 = self.pool.get('account.analytic.account').search(cr, uid, [('code','=',row[2])])
                 if not dimension1:
-                    raise osv.except_osv(_('No analytic account found !'), _('No analytic account could be found for that code %s'%(row[2])))
+                    raise osv.except_osv(_('No analytic account found !'), _('No analytic account could be found for code %s, line %s'%(row[2],str(reader.line_num))))
                 dimension1 = dimension1[0]
             dimension2 = False
             if row[3] != "":
                 dimension2 = self.pool.get('account.analytic.account').search(cr, uid, [('code','=',row[3])])
                 if not dimension2:
-                    raise osv.except_osv(_('No analytic account found !'), _('No analytic account could be found for that code %s'%(row[3])))
+                    raise osv.except_osv(_('No analytic account found !'), _('No analytic account could be found for code %s, line %s'%(row[3],str(reader.line_num))))
                 dimension2 = dimension2[0]
             dimension3 = False
             if row[4] != "":
                 dimension3 = self.pool.get('account.analytic.account').search(cr, uid, [('code','=',row[4])])
                 if not dimension3:
-                    raise osv.except_osv(_('No analytic account found !'), _('No analytic account could be found for that code %s'%(row[4])))
+                    raise osv.except_osv(_('No analytic account found !'), _('No analytic account could be found for code %s, line %s'%(row[4],str(reader.line_num))))
                 dimension3 = dimension3[0]
 
             # Find the due date
@@ -121,25 +121,22 @@ class purchase_order_lines_import_wizard(osv.TransientModel):
                 amount = float(row[7].replace(',','.'))
                 
             # Set unit of measure [8] 
-            uom = 1
-            if row[8] != "":
-                uom = self.pool.get('product.uom').search(cr, uid, [('id','=',row[8])]) #TODO: unique op default code?
-                if not uom:
-                    raise osv.except_osv(_('No unit of measure found !'), _('No uom could be found for line %s'%(str(reader.line_num))))
-                uom = row[8]
+            uom = self.pool.get('product.template').browse(cr, uid, int(row[0])).uom_id.id #TODO: unique op default code?
+            if not uom:
+                raise osv.except_osv(_('No unit of measure found !'), _('No uom could be found for product on line %s'%(str(reader.line_num))))
             
-        
-#             if row[6] != "":
-#                 partners = self.pool.get('res.partner').search(cr, uid, [('id','=',int(row[6]))]) 
-#                 if partners:
-#                     responsible = partners[0]
-#                 else:
-#                     raise osv.except_osv(_('No partner found !'), _('No partner could be found for that ID %s'%(row[2])))
                 
             # Set Unit Price
             unit_price = 0.0
+            if row[8] != "":
+                unit_price = float(row[8].replace(',','.'))
+
+            # Set delivered quantity
+            delivered_qty = 0.0
             if row[9] != "":
-                unit_price = float(row[9].replace(',','.'))
+                delivered_qty = float(row[9].replace(',','.'))
+                if delivered_qty > amount:
+                    raise osv.except_osv(_('Delivered quantity can not be higher than quantity!'), _('line %s'%(str(reader.line_num))))
 
 
 #             # Find tax account
@@ -170,7 +167,7 @@ class purchase_order_lines_import_wizard(osv.TransientModel):
                 'product_uom': uom,
                 'price_unit': unit_price,
                 #'discount': currency,
-                'delivery_quantity': 0,
+                'delivery_quantity': delivered_qty,
                 'delivery_state': False,
             }
             entry_vals.append(vals)
