@@ -165,6 +165,13 @@ msgstr "Partner voor levering"
 msgid "Destination Warehouse"
 msgstr "Bestemmings-magazijn"
 
+#. module: natuurpunt_purchase
+#: field:purchase.order,delivery_address:0
+#: view:purchase.order:0
+msgid "Delivery address"
+msgstr "Leveradres"
+
+
 #. module: purchase
 #: model:ir.ui.menu,name:purchase.menu_purchase_form_action
 msgid "Purchase Orders"

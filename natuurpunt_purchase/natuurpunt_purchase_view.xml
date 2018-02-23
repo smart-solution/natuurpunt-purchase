@@ -43,6 +43,7 @@
 	    <field name="warehouse_id" position="replace">
             <field name="warehouse_id" required="1" on_change="onchange_warehouse_id(warehouse_id,dest_address_id)"/>
 		    <field name="dest_address_id" string="Partner for Delivery"/>
+			<field name="delivery_address" string="Delivery address"/>
             <field name="create_uid" readonly="1"/>
 	    </field>
 

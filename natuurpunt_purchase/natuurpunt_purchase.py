@@ -32,6 +32,7 @@ class purchase_order(osv.osv):
 
         _columns = {
             'partner_delivery_id': fields.many2one('res.partner', 'Partner for Delivery'),
+            'delivery_address': fields.text('Leveradres ',help="Alleen in te vullen indien verschillend van adres 'Partner voor levering' "),
             'default_po_currency': fields.related('pricelist_id', 'currency_id', type='many2one', relation='res.currency', string='Default Currency', readonly=True),
             'dest_address_id':fields.many2one('res.partner', 'Customer Address (Direct Delivery)',
                 states={'confirmed':[('readonly',False)], 'approved':[('readonly',False)],'done':[('readonly',True)]},
