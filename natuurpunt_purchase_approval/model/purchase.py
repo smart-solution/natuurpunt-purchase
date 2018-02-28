@@ -279,3 +279,25 @@ class purchase_order_line(osv.Model):
         if default is None:
             default = {}
         return super(purchase_order_line, self).copy(cr, uid, oid, default, context)
+    
+class purchase_order_line_delivered(osv.osv_memory):
+
+    _name = "purchase.order.line.delivered"
+    _description = "Set delivered quantities in bulk"
+
+    _columns = {
+        'delivered_qty': fields.float('Delivered Quantity'),
+    }
+    def set_delivered(self, cr, uid, ids, context=None):
+        for aid in context['active_ids']:
+            vals = {'delivery_quantity': self.browse(cr,uid,ids)[0].delivered_qty}
+            self.pool.get('purchase.order.line').write(cr, uid, [aid], vals)
+        return
+    
+    def set_all_delivered(self, cr, uid, ids, context=None):
+        for aid in context['active_ids']:
+            pol = self.pool.get('purchase.order.line').browse(cr, uid, [aid])
+            vals = {'delivery_quantity': pol[0].product_qty}
+            self.pool.get('purchase.order.line').write(cr, uid, [aid], vals)
+        
+        return

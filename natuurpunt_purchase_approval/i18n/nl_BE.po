@@ -93,3 +93,38 @@ msgid ""
 "<p>${ctx.get('body_html')|safe}</p>"
 msgstr "\n<p>Inkooporder klaar voor goedkeuring</p>\n\n<p>${ctx.get('body_html')|safe}</p>"
 
+#. module: natuurpunt_purchase_approval
+#: model:ir.actions.act_window,name:natuurpunt_purchase_approval.action_set_delivered_quantities
+msgid "Set delivered quantities"
+msgstr "Geleverde hoeveelheid ingeven"
+
+#. module: natuurpunt_purchase_approval
+#: view:purchase.order.line.delivered:0
+msgid "Set delivered quantity"
+msgstr "Geleverde hoeveelheid"
+
+#. module: natuurpunt_purchase_approval
+#: view:purchase.order.line.delivered:0
+msgid "Delivered quantity"
+msgstr "Geleverde hoeveelheid"
+
+#. module: natuurpunt_purchase_approval
+#: view:purchase.order.line.delivered:0
+msgid "Requested"
+msgstr "Gevraagd"
+
+#. module: natuurpunt_purchase_approval
+#: view:purchase.order.line.delivered:0
+msgid "Set delivered equal to:"
+msgstr "Geleverde hoeveelheid gelijk aan:"
+
+#. module: natuurpunt_purchase_approval
+#: view:purchase.order.line.delivered:0
+msgid "or"
+msgstr "of"
+
+#. module: natuurpunt_purchase_approval
+#: field:purchase.order.line.delivered,delivered_qty:0
+msgid "Delivered Quantity"
+msgstr "Geleverde hoeveelheid"
+
