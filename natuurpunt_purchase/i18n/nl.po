@@ -26,3 +26,8 @@ msgstr "Aankooporder"
 #: view:purchase.order.line:0
 msgid "Undelivered"
 msgstr "Niet gelevered"
+
+#. module: purchase
+#: view:purchase.order:0
+msgid "Approve Order"
+msgstr "Finaal bevestigen"

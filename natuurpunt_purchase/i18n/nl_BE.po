@@ -17,6 +17,11 @@ msgid "Undelivered"
 msgstr "Niet gelevered"
 
 #. module: purchase
+#: view:purchase.order:0
+msgid "Approve Order"
+msgstr "Finaal bevestigen"
+
+#. module: purchase
 #: report:purchase.quotation:0
 msgid "Request for Quotation :"
 msgstr "Offertevraag:"
