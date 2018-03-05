@@ -122,6 +122,12 @@ class purchase_order_line(osv.osv):
 
     _inherit = "purchase.order.line"
 
+    def _check_qty_and_unitprice(self, cr, uid, ids, context=None):
+        for order_line in self.browse(cr, uid, ids, context=context):
+            if order_line.product_qty < 0 or order_line.price_unit < 0:
+                return False
+        return True
+
     _columns = {
         'requisition_id': fields.many2one('purchase.requisition', 'Purchase Requisition'),
         'requisition_line_id': fields.many2one('purchase.requisition.line', 'Purchase Requisition Line'),
@@ -133,6 +139,10 @@ class purchase_order_line(osv.osv):
     }
 
     _order = "order_id desc,name"
+
+    _constraints = [
+         (_check_qty_and_unitprice, _(u'Qty/price must be more than 0'), ['product_qty', 'price_unit']),
+    ]
 
     def default_get(self, cr, uid, fields, context=None):
         if context is None:
@@ -310,6 +320,12 @@ class purchase_requisition_line(osv.osv):
     _inherit = 'purchase.requisition.line'
     _rec_name = 'name'
 
+    def _check_qty_and_unitprice(self, cr, uid, ids, context=None):
+        for req_line in self.browse(cr, uid, ids, context=context):
+            if req_line.product_qty < 0 or req_line.product_price_unit < 0:
+                return False
+        return True
+
     _columns = {
         'name': fields.text('Description', required=True),
         'purchase_responsible_id': fields.many2one('res.users', 'Purchase Responsible'),
@@ -323,6 +339,10 @@ class purchase_requisition_line(osv.osv):
         'state': 'draft',
     }
     _order = 'requisition_id desc,name'
+
+    _constraints = [
+         (_check_qty_and_unitprice, _(u'Qty/price must be more than 0'), ['product_qty', 'product_price_unit']),
+    ]
 
     def onchange_product_id(self, cr, uid, ids, product_id, product_uom_id, context=None):
         """ Changes UoM and name if product_id changes.
