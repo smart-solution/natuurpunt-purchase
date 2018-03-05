@@ -11,6 +11,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#. module: natuurpunt_purchase
+#: view:purchase.order.line:0
+msgid "Undelivered"
+msgstr "Niet gelevered"
 
 #. module: purchase
 #: report:purchase.quotation:0

@@ -21,3 +21,8 @@ msgstr "Offertevraag:"
 #: report:purchase.order:0
 msgid "Purchase Order Confirmation N°"
 msgstr "Aankooporder"
+
+#. module: natuurpunt_purchase
+#: view:purchase.order.line:0
+msgid "Undelivered"
+msgstr "Niet gelevered"
