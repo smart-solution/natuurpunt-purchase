@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp.osv import fields, orm
+from natuurpunt_tools import compose, uids_in_group
 
 class puachase_order(orm.Model):
 
@@ -33,11 +34,23 @@ class purchase_order_line(orm.Model):
             res[line.id] = invoiced_amount
         return res
 
+    def _can_change_delivery_state(self,cr,uid,ids,fieldnames,args,context=None):
+        res={}
+        for line in self.browse(cr, uid, ids, context=context):
+            purchase_users = uids_in_group(self,cr,uid,'group_purchase_user',context=context)
+            res[line.id]=True if line.purchase_resp_id.id==uid or uid in purchase_users else False
+        return res
+
     _inherit = 'purchase.order.line'
 
     _columns = {
         'invoiced_qty': fields.function(_invoiced_qty, string='Invoiced quantity', type='float'),
         'invoiced_amount': fields.function(_invoiced_amount, string='Invoiced amount', type='float'),
+        'can_change_delivery_state': fields.function(
+                                        _can_change_delivery_state,
+                                        method=True,
+                                        type='boolean',
+                                        string='Can change delivery state',),
     }
 
 class account_journal(orm.Model):
