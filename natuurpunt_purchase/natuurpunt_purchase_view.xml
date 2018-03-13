@@ -361,6 +361,41 @@
            <field name="domain">[('user_id','=',uid)]</field>
        </record>
 
+       <record id="natuurpunt_product_product_tree_view" model="ir.ui.view">
+            <field name="name">natuurpunt.product.product.tree</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_product_tree_view"/>
+            <field name="arch" type="xml">
+                <field name="default_code" position="replace">
+                    <field name="id"/>
+                </field>
+            </field>
+        </record>
+
+       <record id="natuurpunt_product_normal_form_view" model="ir.ui.view">
+            <field name="name">natuurpunt.product.normal.form.view</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <field name="default_code" position="replace">
+                    <field name="id"/>
+                </field>
+            </field>
+        </record>
+
+
+        <record id="np_product_search_form_view" model="ir.ui.view">
+            <field name="name">np.product.search.form.view</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_search_form_view"/>
+            <field name="arch" type="xml">
+                    <field name="name" position="replace">
+						<field name="name" string="Product" filter_domain="[('name','ilike',self)]"/>
+						<field name="id" string="ID" filter_domain="[('id','=',self)]"/>
+                    </field>
+            </field>
+        </record>
+
     <menuitem
         id="purchase_requisition.menu_purchase_requisition_pro_mgt"
         parent="purchase.menu_procurement_management"
