@@ -83,6 +83,12 @@
             <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" />
 -->
         </button>
+        <button name="action_cancel" position="replace">
+          <button name="action_cancel" states="approved,except_picking,except_invoice" string="Cancel Order" type="object" confirm="Order annuleren?"/>
+        </button>
+        <button name="purchase_cancel" position="replace">
+          <button name="purchase_cancel" states="draft,confirmed,sent" string="Cancel Order" confirm="Order annuleren?"/>
+        </button>
         <!--
         <xpath expr="//field[@name='order_line']" position="attributes">
             <attribute name="context">{'order_id':active_id}</attribute>            
