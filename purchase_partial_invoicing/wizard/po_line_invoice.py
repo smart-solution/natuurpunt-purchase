@@ -289,6 +289,15 @@ class purchase_order(orm.Model):
 
     def copy(self, cr, uid, id, default=None, context=None):
         default['date_order'] = time.strftime('%Y-%m-%d')
+        order_line = self.pool.get('purchase.order.line')
+        order_line_ids = order_line.search(cr, uid, [('order_id', '=', id)], context=None)
+        order_lines = []
+        default_line = {}
+        default_line['delivery_quantity'] = 0
+        default_line['delivery_state'] = ""
+        for po_line in order_line.browse(cr, uid, order_line_ids):            
+            order_lines.append((0,0,order_line.copy_data(cr, uid, po_line.id,default_line)))
+        default['order_line'] = (order_lines)
         return super(purchase_order, self).copy(cr, uid, id, default=default, context=context)
 
 
