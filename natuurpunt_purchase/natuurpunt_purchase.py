@@ -437,7 +437,7 @@ class product_product(osv.osv):
         for supinfo in product.seller_ids:
             if supinfo.name.id == partner_id:
                 return {'code': supinfo.product_code or product.default_code, 'name': supinfo.product_name or product.name, 'variants': ''}
-        res = {'code': product.id, 'name': product.name, 'variants': product.variants}
+        res = {'code': str(product.id), 'name': product.name, 'variants': product.variants}
         return res
     
     def name_get(self, cr, user, ids, context=None):
