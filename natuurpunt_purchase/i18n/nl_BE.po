@@ -11,6 +11,24 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#. module: natuurpunt_purchase
+#: view:purchase.order.line:0
+msgid "Undelivered"
+msgstr "Niet gelevered"
+
+#. module: purchase
+#: view:purchase.order:0
+msgid "Approve Order"
+msgstr "Finaal bevestigen"
+
+#. module: natuurpunt_purchase
+#: code:addons/natuurpunt_purchase/natuurpunt_purchase.py:144
+#: code:addons/natuurpunt_purchase/natuurpunt_purchase.py:344
+#: constraint:purchase.order.line:0
+#: constraint:purchase.requisition.line:0
+#, python-format
+msgid "Qty/price must be more than 0"
+msgstr "Hoeveelheid/prijs moet groter zijn dan 0"
 
 #. module: purchase
 #: report:purchase.quotation:0
@@ -164,6 +182,13 @@ msgstr "Partner voor levering"
 #: field:purchase.order,warehouse_id:0
 msgid "Destination Warehouse"
 msgstr "Bestemmings-magazijn"
+
+#. module: natuurpunt_purchase
+#: field:purchase.order,delivery_address:0
+#: view:purchase.order:0
+msgid "Delivery address"
+msgstr "Leveradres"
+
 
 #. module: purchase
 #: model:ir.ui.menu,name:purchase.menu_purchase_form_action

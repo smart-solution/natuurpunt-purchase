@@ -21,6 +21,35 @@
             </field>
         </record>
 
+      <record id="view_set_delivered_quantities" model="ir.ui.view">
+            <field name="name">Set delivered quantities</field>
+            <field name="model">purchase.order.line.delivered</field>
+            <field name="arch" type="xml">
+                <form string="Delivered Quantities" version="7.0">
+                    <group>
+                        <field name="delivered_qty"/>
+                    </group>
+                    <footer>
+						Set delivered equal to:
+                        <button name="set_all_delivered" string="Requested" type="object" class="oe_highlight"/>
+						or
+						<button name="set_delivered" string="Delivered quantity" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <act_window name="Set delivered quantities"
+            res_model="purchase.order.line.delivered"
+            src_model="purchase.order.line"
+            view_mode="form"
+            target="new"
+            multi="True"
+            key2="client_action_multi"
+            id="action_set_delivered_quantities"/>
+
         <record model="ir.ui.view" id="purchase_approval_item_tree">
             <field name="name">purchase_approval_item_tree</field>
             <field name="model">purchase.approval.item</field>

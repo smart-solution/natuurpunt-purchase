@@ -35,9 +35,12 @@
             <field name="arch" type="xml">
                     <field name="delivery_state" position="before">
                         <field name="delivery_quantity"/>
+						<field name="can_change_delivery_state" invisible="1"/>
                     </field>
                     <button name="%(natuurpunt_purchase.action_purchase_order_line_delivery)d" position="replace">
-                        <button name="%(natuurpunt_purchase.action_purchase_order_line_delivery)d" string="Delivery Status" type="action" icon="gtk-execute"/>
+						<button name="%(natuurpunt_purchase.action_purchase_order_line_delivery)d" 
+							    string="Delivery Status" type="action" icon="gtk-execute"
+								attrs="{'invisible':[('can_change_delivery_state','=',False)]}"/>
                     </button>
             </field>
         </record>
@@ -77,10 +80,13 @@
         <field name="arch" type="xml">
 
         <xpath expr="//field[@name='order_line']/tree//field[@name='price_subtotal']" position="after">
-            <field name="delivery_quantity"/>
+			<field name="delivery_quantity"/>
+			<field name="can_change_delivery_state" invisible="1"/>
         </xpath>
         <xpath expr="//field[@name='order_line']/tree//button[@string='Delivery Status']" position="replace">
-                <button name="%(natuurpunt_purchase.action_purchase_order_line_delivery)d" string="Delivery Status" type="action" icon="gtk-execute"/>
+			<button name="%(natuurpunt_purchase.action_purchase_order_line_delivery)d" 
+				    string="Delivery Status" type="action" icon="gtk-execute"
+					attrs="{'invisible':[('can_change_delivery_state','=',False)]}"/>
         </xpath>
 
         </field>

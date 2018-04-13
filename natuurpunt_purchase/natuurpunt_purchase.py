@@ -32,6 +32,7 @@ class purchase_order(osv.osv):
 
         _columns = {
             'partner_delivery_id': fields.many2one('res.partner', 'Partner for Delivery'),
+            'delivery_address': fields.text('Leveradres ',help="Alleen in te vullen indien verschillend van adres 'Partner voor levering' "),
             'default_po_currency': fields.related('pricelist_id', 'currency_id', type='many2one', relation='res.currency', string='Default Currency', readonly=True),
             'dest_address_id':fields.many2one('res.partner', 'Customer Address (Direct Delivery)',
                 states={'confirmed':[('readonly',False)], 'approved':[('readonly',False)],'done':[('readonly',True)]},
@@ -121,6 +122,12 @@ class purchase_order_line(osv.osv):
 
     _inherit = "purchase.order.line"
 
+    def _check_qty_and_unitprice(self, cr, uid, ids, context=None):
+        for order_line in self.browse(cr, uid, ids, context=context):
+            if order_line.product_qty < 0 or order_line.price_unit < 0:
+                return False
+        return True
+
     _columns = {
         'requisition_id': fields.many2one('purchase.requisition', 'Purchase Requisition'),
         'requisition_line_id': fields.many2one('purchase.requisition.line', 'Purchase Requisition Line'),
@@ -132,6 +139,10 @@ class purchase_order_line(osv.osv):
     }
 
     _order = "order_id desc,name"
+
+    _constraints = [
+         (_check_qty_and_unitprice, _(u'Qty/price must be more than 0'), ['product_qty', 'price_unit']),
+    ]
 
     def default_get(self, cr, uid, fields, context=None):
         if context is None:
@@ -309,6 +320,12 @@ class purchase_requisition_line(osv.osv):
     _inherit = 'purchase.requisition.line'
     _rec_name = 'name'
 
+    def _check_qty_and_unitprice(self, cr, uid, ids, context=None):
+        for req_line in self.browse(cr, uid, ids, context=context):
+            if req_line.product_qty < 0 or req_line.product_price_unit < 0:
+                return False
+        return True
+
     _columns = {
         'name': fields.text('Description', required=True),
         'purchase_responsible_id': fields.many2one('res.users', 'Purchase Responsible'),
@@ -323,6 +340,10 @@ class purchase_requisition_line(osv.osv):
     }
     _order = 'requisition_id desc,name'
 
+    _constraints = [
+         (_check_qty_and_unitprice, _(u'Qty/price must be more than 0'), ['product_qty', 'product_price_unit']),
+    ]
+
     def onchange_product_id(self, cr, uid, ids, product_id, product_uom_id, context=None):
         """ Changes UoM and name if product_id changes.
         @param name: Name of the field
@@ -336,10 +357,7 @@ class purchase_requisition_line(osv.osv):
             lang = self.pool.get('res.users').browse(cr, uid, uid).lang
             context.update({'lang': lang})
             prod = self.pool.get('product.product').browse(cr, uid, product_id, context=context)
-            if prod.default_code:
-                line_desc = "[" + prod.default_code + "] " + prod.name
-            else:
-                line_desc = prod.name
+            line_desc = "[" + prod.id + "] " + prod.name
             value = {'product_category_id':prod.categ_id.id, 'product_uom_id': prod.uom_id.id,'product_qty':1.0, 'name':line_desc, 'purchase_responsible_id':prod.categ_id.purchase_responsible_id and prod.categ_id.purchase_responsible_id.id or False, 'product_price_unit':prod.standard_price}
         return {'value': value}
 
@@ -414,6 +432,57 @@ class product_product(osv.osv):
         'sale_ok': False,
         'type': 'service',
     }
+    
+    def _get_partner_code_name(self, cr, uid, ids, product, partner_id, context=None):
+        for supinfo in product.seller_ids:
+            if supinfo.name.id == partner_id:
+                return {'code': supinfo.product_code or product.default_code, 'name': supinfo.product_name or product.name, 'variants': ''}
+        res = {'code': str(product.id), 'name': product.name, 'variants': product.variants}
+        return res
+    
+    def name_get(self, cr, user, ids, context=None):
+        if context is None:
+            context = {}
+        if isinstance(ids, (int, long)):
+            ids = [ids]
+        if not len(ids):
+            return []
+        def _name_get(d):
+            name = d.get('name','')
+            code = d.get('id',False)
+            if code:
+                name = '[%s] %s' % (code,name)
+            if d.get('variants'):
+                name = name + ' - %s' % (d['variants'],)
+            return (d['id'], name)
+
+        partner_id = context.get('partner_id', False)
+        if partner_id:
+            partner_ids = [partner_id, self.pool['res.partner'].browse(cr, user, partner_id, context=context).commercial_partner_id.id]
+        else:
+            partner_ids = []
+
+        result = []
+        for product in self.browse(cr, user, ids, context=context):
+            sellers = partner_ids and filter(lambda x: x.name.id in partner_ids, product.seller_ids) or []
+            if sellers:
+                for s in sellers:
+                    mydict = {
+                              'id': product.id,
+                              'name': s.product_name or product.name,
+                              'default_code': s.product_code or product.default_code,
+                              'variants': product.variants
+                              }
+                    result.append(_name_get(mydict))
+            else:
+                mydict = {
+                          'id': product.id,
+                          'name': product.name,
+                          'default_code': product.default_code,
+                          'variants': product.variants
+                          }
+                result.append(_name_get(mydict))
+        return result
 
 class product_category(osv.osv):
 
