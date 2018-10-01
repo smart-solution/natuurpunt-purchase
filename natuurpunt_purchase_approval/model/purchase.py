@@ -233,7 +233,13 @@ class purchase_order(osv.Model):
         for order_id in ids:
             self.write(cr, uid, [order_id], {'state':'approved'})
             for line_id in self.pool.get('purchase.order.line').search(cr, uid, [('order_id','=',order_id)]):
-                self.pool.get('purchase.order.line').write(cr, uid, [line_id], {'state':'approved','invoiced':False})
+		for po_line in self.pool.get('purchase.order.line').browse(cr, uid, [line_id]):
+		    if po_line.invoiced:
+			error_functional_scope = _('Cannot reopen purchase order')
+	                detailed_msg = _("""Purchase order %s (id %s) still has at least one invoiced order line.""" % (po_line.order_id.name, po_line.order_id.id))
+        	        raise osv.except_osv(error_functional_scope, detailed_msg)
+		else:
+                    self.pool.get('purchase.order.line').write(cr, uid, [line_id], {'state':'approved','invoiced':False})
         return True
 
 
