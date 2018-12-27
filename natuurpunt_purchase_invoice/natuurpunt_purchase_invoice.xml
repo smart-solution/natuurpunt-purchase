@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+      <record id="view_supplier_purchase_order_line_delivery_tree" model="ir.ui.view">
+          <field name="name">Supplier Purchase Order Lines</field>
+          <field name="model">purchase.order.line</field>
+          <field name="priority">16</field>
+          <field name="arch" type="xml">
+             <tree string="Supplier Purchase Order Lines">
+       	          <field name="order_id"/>
+               	  <field name="purchase_resp_id" invisible="1"/>
+                  <field name="po_resp_id"/>
+       	          <field name="partner_id"/>
+               	  <field name="dest_address_id"/>
+                  <field name="name" width="50"/>
+       	          <field name="analytic_dimension_1_id" width="10"/>
+               	  <field name="analytic_dimension_2_id" width="10"/>
+                  <field name="analytic_dimension_3_id" width="10"/>
+       	          <field name="product_qty"/>
+               	  <field name="product_uom"/>
+              </tree>
+          </field>
+      </record>
+
+      <record id="action_supplier_purchase_order_line_delivery_tree" model="ir.actions.act_window">
+             <field name="name">Supplier Purchase Order Lines</field>
+             <field name="type">ir.actions.act_window</field>
+             <field name="res_model">purchase.order.line</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree</field>
+             <field name="view_id" ref="view_supplier_purchase_order_line_delivery_tree"/>
+             <field name="context">{'show_redirect': False}</field>
+      </record>
+
+      <record id="view_np_purchase_invoice_customer" model="ir.ui.view">
+            <field name="name">view.np.purchase.invoice.customer</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <button name="action_cancel_draft" position="after">
+			<button name="redirect_to_purchase_order" string="op aankooplijnen" type="object" 
+                                icon="gtk-zoom-100" attrs="{'invisible':['|',('state','!=','draft'),('type','!=','in_invoice')]}" />
+	        </button>
+            </field>
+      </record>
+
+    </data>
+</openerp>

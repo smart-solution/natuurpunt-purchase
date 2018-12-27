@@ -151,6 +151,7 @@ class purchase_order_mail_compose_message(osv.TransientModel):
 
             recipient_ids = []
             recipient_ids.append(values['supplier_id'].id)
+            email_to = values['supplier_id'].name + ' <' + values['supplier_id'].email + '>'
             values.pop('supplier_id')
 
             json_string = wizard.json_object
@@ -166,6 +167,7 @@ class purchase_order_mail_compose_message(osv.TransientModel):
                     raise osv.except_osv(_("Warning"), _(message))
                 values['body_html'] = values['body']
                 values['email_cc'] = email_cc
+                values['email_recipients'] = email_to + ',' + email_cc[:-1]
                 msg_id = mail_mail.create(cr, uid, values, context=context)
                 mail = mail_mail.browse(cr, uid, msg_id, context=context)
 

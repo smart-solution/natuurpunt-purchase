@@ -503,9 +503,12 @@ class account_invoice(osv.osv):
         invoice = self.browse(cr, uid, ids)[0]
         context['default_veld'] = invoice.number
         po_line_ids = []
+        amount_total = []
         for inv_line in invoice.invoice_line:
             po_line_ids += [polines.id for polines in inv_line.purchase_order_line_ids]
+	    amount_total += [polines.price_subtotal for polines in inv_line.purchase_order_line_ids]
         context['default_po_line_ids'] = po_line_ids
+        context['default_amount_total'] = sum(amount_total)
 
 # fill needed fields in context
         return {
@@ -527,6 +530,7 @@ class view_origin_po(osv.osv_memory):
     _columns = {
         'veld': fields.char('Naam'),
         'po_line_ids': fields.many2many('purchase.order.line', 'purchase_order_line_invoice_rel', 'invoice_id', 'order_line_id', 'Purchase Order Lines', readonly=True),
+        'amount_total': fields.float('Bestellijn totalen excl. BTW', readonly=True),
         }
     
 
