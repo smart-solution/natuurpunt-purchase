@@ -25,31 +25,81 @@ class purchase_approval_item(osv.osv):
     _inherit = 'purchase.approval.item'
 
     def redirect_to_invoice(self, cr, uid, ids, context=None):
+
+        if context.get('approval',False):
+            company_ids = [pai.invoice_id.company_id.id for pai in self.browse(cr,uid,ids)]
+            domain = [
+                ('invoice_id', '!=', False),
+                ('state', '=', 'waiting'),
+                '|',
+                ('line_next_approver_id', '=', uid),
+                '&',
+                ('line_next_approver_id', '!=', False),
+                ('line_next_approver_id.approval_substitute_id', '=', uid),
+                ('invoide_id.company_id.id', 'in', company_ids),
+            ]
+            view_name = _('My Invoices to Approve')
+        else:
+            domain = [
+                ('invoice_id', '!=', False),
+                ('state', '=', 'waiting'),
+            ]
+            view_name = _('Invoices to Approve')          
+        all_ids = self.search(cr,uid,domain)
+        invoice_ids = [pai.invoice_id.id for pai in self.browse(cr,uid,all_ids)]
+
         for pai in self.browse(cr,uid,ids,context=context):
             invoice_id = pai.invoice_id.id
+        context['redirect_id'] = invoice_id
+        context.pop('group_by', None)
         return {
-                'name': _('My Invoices to Approve'),
-                'view_type': 'form,tree',
-                'view_mode': 'form',
+                'name': view_name,
+                'view_type': 'form',
+                'view_mode': 'tree,form',
                 'res_model': 'account.invoice',
                 'target': 'current',
                 'context': context,
-                'res_id': invoice_id,
                 'type': 'ir.actions.act_window',
+                'domain': [('id','in',invoice_ids)],
                 }
         
     def redirect_to_purchase_order(self, cr, uid, ids, context=None):
+
+        if context.get('approval',False):
+            company_ids = [pai.purchase_order_id.company_id.id for pai in self.browse(cr,uid,ids)]
+            domain = [
+                ('purchase_order_id', '!=', False),
+                ('state', '=', 'waiting'),
+                '|',
+                ('line_next_approver_id', '=', uid),
+                '&',
+                ('line_next_approver_id', '!=', False),
+                ('line_next_approver_id.approval_substitute_id.id', '=', uid),
+                ('purchase_order_id.company_id.id', 'in', company_ids),
+            ]
+            view_name = _('My Purchases to Approve'),
+        else:
+            domain = [
+                ('purchase_order_id', '!=', False),
+                ('state', '=', 'waiting'),
+            ]
+            view_name = _('Purchases to Approve'),
+        all_ids = self.search(cr,uid,domain)
+        purchase_order_ids = [pai.purchase_order_id.id for pai in self.browse(cr,uid,all_ids)]
+
         for pai in self.browse(cr,uid,ids,context=context):
             purchase_order_id = pai.purchase_order_id.id
+        context['redirect_id'] = purchase_order_id
+        context.pop('group_by', None)
         return {
-                'name': _('My Purchases to Approve'),
-                'view_type': 'form,tree',
-                'view_mode': 'form',
+                'name': view_name,
+                'view_type': 'form',
+                'view_mode': 'tree,form',
                 'res_model': 'purchase.order',
                 'target': 'current',
                 'context': context,
-                'res_id': purchase_order_id,
-                'type': 'ir.actions.act_window',                
+                'type': 'ir.actions.act_window',
+                'domain': [('id','in',purchase_order_ids)],
                 }
 
 purchase_approval_item()
