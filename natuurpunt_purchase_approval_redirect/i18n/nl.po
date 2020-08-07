@@ -1,0 +1,57 @@
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+#	* natuurpunt_purchase_approval_redirect
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenERP Server 7.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-08-06 12:53+0000\n"
+"PO-Revision-Date: 2020-08-06 12:53+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: natuurpunt_purchase_approval_redirect
+#: code:addons/natuurpunt_purchase_approval_redirect/natuurpunt_purchase_approval_redirect.py:47
+#, python-format
+msgid "Invoices to Approve"
+msgstr "Facturen voor goedkeuring"
+
+#. module: natuurpunt_purchase_approval_redirect
+#: model:ir.model,name:natuurpunt_purchase_approval_redirect.model_purchase_approval_item
+msgid "Approval items for purchase orders and invoices"
+msgstr "Approval items for purchase orders and invoices"
+
+#. module: natuurpunt_purchase_approval_redirect
+#: view:purchase.approval.item:0
+msgid "redirect_to_purchase_order"
+msgstr "redirect_to_purchase_order"
+
+#. module: natuurpunt_purchase_approval_redirect
+#: code:addons/natuurpunt_purchase_approval_redirect/natuurpunt_purchase_approval_redirect.py:41
+#, python-format
+msgid "My Invoices to Approve"
+msgstr "Mijn facturen voor goedkeuring"
+
+#. module: natuurpunt_purchase_approval_redirect
+#: code:addons/natuurpunt_purchase_approval_redirect/natuurpunt_purchase_approval_redirect.py:80
+#, python-format
+msgid "My Purchases to Approve"
+msgstr "Mijn aankooporders voor goedkeuring"
+
+#. module: natuurpunt_purchase_approval_redirect
+#: code:addons/natuurpunt_purchase_approval_redirect/natuurpunt_purchase_approval_redirect.py:86
+#, python-format
+msgid "Purchases to Approve"
+msgstr "Aankooporders voor goedkeuring"
+
+#. module: natuurpunt_purchase_approval_redirect
+#: view:purchase.approval.item:0
+msgid "redirect_to_invoice"
+msgstr "redirect_to_invoice"
+
+
