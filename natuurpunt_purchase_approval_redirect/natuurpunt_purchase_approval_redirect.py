@@ -36,7 +36,7 @@ class purchase_approval_item(osv.osv):
                 '&',
                 ('line_next_approver_id', '!=', False),
                 ('line_next_approver_id.approval_substitute_id', '=', uid),
-                ('invoide_id.company_id.id', 'in', company_ids),
+                ('invoice_id.company_id.id', 'in', company_ids),
             ]
             view_name = _('My Invoices to Approve')
         else:
